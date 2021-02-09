@@ -4,13 +4,16 @@ import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.listener.GuiHook;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Consumer;
 
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ import java.util.WeakHashMap;
 
 public class BaseGui implements InventoryHolder {
 
-    private static final Map<Inventory,BaseGui> GUI_INVETORIES = new WeakHashMap<>();
+    public static final Map<Inventory,BaseGui> GUI_INVETORIES = new WeakHashMap<>();
 
     private Consumer<InventoryClickEvent> clickEvent;
     private Consumer<InventoryCloseEvent> closeEvent;
@@ -46,7 +49,6 @@ public class BaseGui implements InventoryHolder {
                     ArcaneTable.getPlugin());
             hasRegisteredListeners = true;
         }
-        ;
     }
 
     public void addToInventory(Inventory inv){}
@@ -87,6 +89,7 @@ public class BaseGui implements InventoryHolder {
             if(event instanceof InventoryClickEvent){
                 InventoryClickEvent clickEvent = (InventoryClickEvent) event;
                 message += ", slot=" + clickEvent.getSlot();
+                t.printStackTrace();
             }
             Logging.danger(message);
         }
@@ -124,13 +127,7 @@ public class BaseGui implements InventoryHolder {
         }
         return inv;
     }
-    public static void Timber(){
-        GUI_INVETORIES.forEach((inv,gui)->{
-            for (HumanEntity viewer : gui.getViewers()) {
-                gui.callOnClose(new InventoryCloseEvent(viewer.getOpenInventory()));
-            }
-        });
-    }
+
     public int getRows() {
         return rows;
     }

@@ -1,6 +1,7 @@
 package me.tropicalshadow.arcanetable.utils;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +12,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnchantmentUtils {
+
+
+    public static ArrayList<Enchantment> getAllEnchantments(){
+        return (ArrayList<Enchantment>) Arrays.asList(Enchantment.values());
+    }
 
     public static ArrayList<Enchantment> getCanEnchants(ItemStack item){
         ArrayList<Enchantment> output = new ArrayList<>();
@@ -24,7 +30,13 @@ public class EnchantmentUtils {
         return output;
     }
     public static String getEnchantmentName(Enchantment ench){
-        String base = ench.getKey().getKey();
+        EnchantmentCosts en = EnchantmentCosts.getFromEnchant(ench);
+        String base;
+        if(en!=EnchantmentCosts.UNKNOWN){
+            base = en.name();
+        }else{
+            base = ench.getKey().getKey();
+        }
         String spacedName = base.replace('_',' ');
         return WordUtils.capitalizeFully(spacedName);
     }
@@ -58,6 +70,10 @@ public class EnchantmentUtils {
 
         return conflicts;
     }
+    public static String getEnchantDisplayWithRomanNum(Enchantment ench, int level){
+        String romanNum = integerToRoman(level);
+        return (ench.isCursed() ? ChatColor.RED : ChatColor.GRAY ) + (getEnchantmentName(ench)+" "+romanNum);
+    }
     public static boolean doesItemAlreadyHasEnchant(ItemStack item, Enchantment ench, int level){
         return (item.containsEnchantment(ench) && item.getEnchantmentLevel(ench)==level && level != 0);
     }
@@ -66,6 +82,21 @@ public class EnchantmentUtils {
     }
     public static int getEnchantmentCost(Enchantment ench,int level){
         return EnchantmentCosts.getFromEnchant(ench).getCost(level);
+    }
+    private static final int[] values = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+    private static final String[] romanLiterals = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+
+    public static String integerToRoman(int number) {
+
+        StringBuilder s = new StringBuilder();
+
+        for (int i = 0; i < values.length; i++) {
+            while (number >= values[i]) {
+                number -= values[i];
+                s.append(romanLiterals[i]);
+            }
+        }
+        return s.toString();
     }
     public enum EnchantmentCosts{
         PROTECTION(0,4,1, Enchantment.PROTECTION_ENVIRONMENTAL),

@@ -1,15 +1,14 @@
 package me.tropicalshadow.arcanetable.utils;
 
-import dev.dbassett.skullcreator.SkullCreator;
-import org.bukkit.Bukkit;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,7 @@ public class ItemBuilder {
 
     private Map<Enchantment,Integer> enchantments = new HashMap<>();
     private ArrayList<String> lore = new ArrayList<>();
-    private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmM2NWVkMjgyOWM4M2UxMTlhODBkZmIyMjIxNjQ0M2U4NzhlZjEwNjQ5YzRhMzU0Zjc0YmY0NWFkMDZiYzFhNyJ9fX0=";
+    private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiMmYzNmJmZGZhY2Q5NTdhNWY4YzQxY2NjZTM5ZWZlZjU0YzI1YWUxM2U0MDhiOGQ4YzFmYzQzMDhjYTcwIn19fQ==";
     private boolean ignoreLevelRestriction = false;
     private Material material = Material.AIR;
     private String name = "Unamed Item";
@@ -42,7 +41,7 @@ public class ItemBuilder {
     public ItemStack build(){
         ItemStack item;
         if(this.material == Material.PLAYER_HEAD){
-            item = SkullCreator.itemFromBase64(this.playerHeadname);//.itemFromUuid(UUID.fromString(this.playerHeadname));
+            item = SkullUtils.itemFromBase64(this.playerHeadname);
         }else{
             item = new ItemStack(this.material);
         }
@@ -54,11 +53,20 @@ public class ItemBuilder {
         if(!this.lore.isEmpty())
              formattedLore = this.lore.stream().map((str)-> ChatColor.translateAlternateColorCodes('&',str)).collect(Collectors.toList());
         meta.setLore(formattedLore);
-        enchantments.forEach((ench,level)-> meta.addEnchant(ench,level,this.ignoreLevelRestriction));
 
-        item.setItemMeta(meta);
+        enchantments.forEach((ench,level)-> meta.addEnchant(ench,level,this.ignoreLevelRestriction));
+        item.setItemMeta(updateEnchantmentVisuals(meta));
         return item;
     }
+
+    public ItemMeta updateEnchantmentVisuals(ItemMeta meta){
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        ArrayList<String> enchants = new ArrayList<>();
+        meta.getEnchants().forEach((ench,level)-> enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level)));
+        meta.setLore(enchants);
+        return meta;
+    }
+
 
 
 }

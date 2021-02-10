@@ -1,8 +1,11 @@
 package me.tropicalshadow.arcanetable.gui;
 
 
+
+import me.tropicalshadow.arcanetable.objects.Paginator;
 import me.tropicalshadow.arcanetable.utils.EnchantmentUtils;
 import me.tropicalshadow.arcanetable.utils.ItemBuilder;
+import me.tropicalshadow.arcanetable.utils.Logging;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,13 +21,20 @@ import java.util.*;
 
 public class TableGui extends BaseGui{
 
+    public Paginator paginator;
+
     public TableGui(){
         super("Arcane Table",6);
         this.setOnClick(this::clickInventoryEvent);
         this.setOnClose(this::closeInventoryEvent);
         this.setOnOpen(this::openInventoryEvent);
+        try {
+            paginator = new Paginator(Enchantment.class,20);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    
+
     public ItemStack getCurrentItem(){
         return getInventory().getItem((9*2)+1);
     }
@@ -36,6 +46,9 @@ public class TableGui extends BaseGui{
     public void clickInventoryEvent(InventoryClickEvent event){
         BaseGui gui = BaseGui.getGui(event.getInventory());
         if(gui != null){
+            if(!(gui instanceof TableGui) ){
+                return;
+            }
             if(event.getInventory()==event.getClickedInventory()){
                 Player player = (Player)event.getWhoClicked();
                 event.setCancelled(true);
@@ -46,6 +59,17 @@ public class TableGui extends BaseGui{
                     updateInventoryWithEnchantments(event.getInventory(),null,true);
                 }else if(tempItem != null){
                     ItemStack clicked = event.getCurrentItem();
+                    if(event.getSlot() == 4 || event.getSlot()==6){
+                        if(clicked!=null && clicked.getType().equals(Material.PLAYER_HEAD)){
+                            if(event.getSlot()==4) {
+                                ((TableGui)gui).paginator.prevPage();
+                            }else{
+                                ((TableGui)gui).paginator.nextPage();
+                            }
+                            updateInventoryWithEnchantments(event.getInventory(),getCurrentItem(),true);
+                        }
+                        return;
+                    }
                     if(clicked == null || (!clicked.getType().equals(Material.NETHER_STAR) && !clicked.getType().equals(Material.KNOWLEDGE_BOOK) && !clicked.getType().equals(Material.ENCHANTED_BOOK))){
                         return;
                     }
@@ -100,18 +124,25 @@ public class TableGui extends BaseGui{
     }
 
     public void updateInventoryWithEnchantments(Inventory inv,ItemStack unique,boolean isFake){
+        displayArrows(inv, false);
         if(unique==null){
             for(int x = 0; x < 5; x++ ){
                 for (int y = 0; y < 4; y++){
                     inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
                 }
             }
+            ((TableGui)BaseGui.getGui(inv)).paginator.setPage(0);
             return;
         }
         int index = 0;
 
         if(isFake) {
             ArrayList<Enchantment> enchs = EnchantmentUtils.getCanEnchants(unique);
+            if(enchs.size()>20){
+                ((TableGui)BaseGui.getGui(inv)).paginator.clear().addItems(enchs);
+                enchs = new ArrayList<>((Collection<? extends Enchantment>) ((TableGui)BaseGui.getGui(inv)).paginator.getCurrentPage());
+                displayArrows(inv, true);
+            }
             for (int y = 0; y < 4; y++) {
                 for (int x = 0; x < 5; x++) {
                     if (index >= enchs.size()) {
@@ -120,7 +151,6 @@ public class TableGui extends BaseGui{
                     }
                     Enchantment ench = enchs.get(index);
                     boolean isConflict = EnchantmentUtils.findConflictingEnchantments(unique,ench).size()>=1;
-                    //Logging.info(isConflict + " : "+EnchantmentUtils.findConflictingEnchantments(unique,ench).size()+" : ");
                     inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.KNOWLEDGE_BOOK)
                             .setName(EnchantmentUtils.getEnchantmentName(ench))
                             .setIgnoreLevelRestriction(true)
@@ -188,20 +218,37 @@ public class TableGui extends BaseGui{
         }
         inv.setItem((9*3)+1,new ItemBuilder().setMaterial(Material.ENCHANTING_TABLE).setName("&aPlace item above").addLore(ChatColor.WHITE+"Place item in slot above").addLore(ChatColor.WHITE+"to view enchantments").build());
         inv.setItem((9*5)+4,new ItemBuilder().setMaterial(Material.NETHER_STAR).setName("&aBack").addLore(ChatColor.WHITE+"Click to go back").build());
-        inv.setItem((4 * 9)-1, new ItemBuilder()
-                .setMaterial(Material.PLAYER_HEAD)
-                .setName("&2Next Page")
-                .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM1YThhYThhNGMwMzYwMGEyYjVhNGViNmJlYjUxZDU5MDI2MGIwOTVlZTFjZGFhOTc2YjA5YmRmZTU2NjFjNiJ9fX0==")
-                .build());
-        inv.setItem((5 * 9)-1, new ItemBuilder()
-                .setMaterial(Material.PLAYER_HEAD)
-                .setName("&2Prev Page")
-                .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWM1YThhYThhNGMwMzYwMGEyYjVhNGViNmJlYjUxZDU5MDI2MGIwOTVlZTFjZGFhOTc2YjA5YmRmZTU2NjFjNiJ9fX0==")
-                .build());
+        displayArrows(inv, false);
         for(int x = 0; x < 5; x++ ){
             for (int y = 0; y < 4; y++){
                 inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
             }
+        }
+
+    }
+
+    public void displayArrows(Inventory inv, boolean active){
+        if(active){
+            inv.setItem(6 , new ItemBuilder()
+                    .setMaterial(Material.PLAYER_HEAD)
+                    .setName("&2Next Page")
+                    .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19")
+                    .build());
+            TableGui gui = ((TableGui)BaseGui.getGui(inv));
+            inv.setItem(5,new ItemBuilder()
+                    .setName("Page "+(gui.paginator.currentPage+1)+" / "+(gui.paginator.getPageCount()+1))
+                    .setMaterial(Material.DRAGON_EGG)
+                    .build()
+                    );
+            inv.setItem(4, new ItemBuilder()
+                    .setMaterial(Material.PLAYER_HEAD)
+                    .setName("&2Prev Page")
+                    .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=")
+                    .build());
+        }else{
+            inv.setItem(4,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
+            inv.setItem(5,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
+            inv.setItem(6,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
         }
 
     }

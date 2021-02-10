@@ -17,12 +17,14 @@ public class ItemBuilder {
     private Map<Enchantment,Integer> enchantments = new HashMap<>();
     private ArrayList<String> lore = new ArrayList<>();
     private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiMmYzNmJmZGZhY2Q5NTdhNWY4YzQxY2NjZTM5ZWZlZjU0YzI1YWUxM2U0MDhiOGQ4YzFmYzQzMDhjYTcwIn19fQ==";
+    private String language = Locale.ENGLISH.getLanguage();
     private boolean ignoreLevelRestriction = false;
     private Material material = Material.AIR;
     private String name = "Unamed Item";
     private int count = 1;
 
     public ItemBuilder setName(String name){this.name = name;return this;}
+    public ItemBuilder setLang(String lang){this.language = lang;return this;}
     public ItemBuilder setMaterial(Material mat){this.material = mat;return this;}
     public ItemBuilder setCount(int count){this.count = count;return this;}
     public ItemBuilder addLore(String... str){
@@ -62,7 +64,7 @@ public class ItemBuilder {
     public ItemMeta updateEnchantmentVisuals(ItemMeta meta){
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ArrayList<String> enchants = new ArrayList<>();
-        meta.getEnchants().forEach((ench,level)-> enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level)));
+        meta.getEnchants().forEach((ench,level)-> enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language)));
         meta.setLore(enchants);
         return meta;
     }

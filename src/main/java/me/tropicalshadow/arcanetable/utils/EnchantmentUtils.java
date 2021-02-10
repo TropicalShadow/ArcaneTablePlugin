@@ -1,13 +1,21 @@
 package me.tropicalshadow.arcanetable.utils;
 
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
+import net.md_5.bungee.chat.TranslationRegistry;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentOffer;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,15 +37,26 @@ public class EnchantmentUtils {
         }
         return output;
     }
-    public static String getEnchantmentName(Enchantment ench){
+    public static String getEnchantmentName(Enchantment ench, @Nullable String language){
         EnchantmentCosts en = EnchantmentCosts.getFromEnchant(ench);
         String base;
-        if(en!=EnchantmentCosts.UNKNOWN){
-            base = en.name();
-        }else{
-            base = ench.getKey().getKey();
-        }
-        String spacedName = base.replace('_',' ');
+        //if(en!=EnchantmentCosts.UNKNOWN){
+        //    base = en.name();
+       // }else{
+            if(language!=null){
+                base = ench.getKey().getKey().toLowerCase(new Locale(language));
+                Logging.info("Using: "+language + " : "+ new Locale(language).getDisplayName() +" : "+base );
+            }else{
+                base = ench.getKey().getKey();
+            }
+      //  }
+
+        TranslatableComponent comp = new TranslatableComponent(language,base);
+            //TODO - FIGURE LANGUAGE FOR ENCHANTMENTS OUT
+
+
+
+        String spacedName = comp.toPlainText();//base.replace('_',' ');
         return WordUtils.capitalizeFully(spacedName);
     }
     public static ItemStack applyEnchantToItem(ItemStack item, Enchantment ench, int level,boolean isUnsafe, boolean removeConflitcs){
@@ -70,9 +89,9 @@ public class EnchantmentUtils {
 
         return conflicts;
     }
-    public static String getEnchantDisplayWithRomanNum(Enchantment ench, int level){
+    public static String getEnchantDisplayWithRomanNum(Enchantment ench, int level, @Nullable String language){
         String romanNum = integerToRoman(level);
-        return (ench.isCursed() ? ChatColor.RED : ChatColor.GRAY ) + (getEnchantmentName(ench)+" "+romanNum);
+        return (ench.isCursed() ? ChatColor.RED : ChatColor.GRAY ) + (getEnchantmentName(ench,language)+" "+romanNum);
     }
     public static boolean doesItemAlreadyHasEnchant(ItemStack item, Enchantment ench, int level){
         return (item.containsEnchantment(ench) && item.getEnchantmentLevel(ench)==level && level != 0);

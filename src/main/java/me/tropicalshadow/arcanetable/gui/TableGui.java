@@ -151,9 +151,12 @@ public class TableGui extends BaseGui{
                     }
                     Enchantment ench = enchs.get(index);
                     boolean isConflict = EnchantmentUtils.findConflictingEnchantments(unique,ench).size()>=1;
+
+                    String lang = ((Player)inv.getViewers().get(0)).getLocale();
                     inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.KNOWLEDGE_BOOK)
-                            .setName(EnchantmentUtils.getEnchantmentName(ench))
+                            .setName(EnchantmentUtils.getEnchantmentName(ench,lang))
                             .setIgnoreLevelRestriction(true)
+                            .setLang(lang)
                             .addLore(isConflict ? "&4Enchantment conflicts with current enchants" : null)
                             .addEnchantment(ench, 1)
                             .build());
@@ -175,9 +178,11 @@ public class TableGui extends BaseGui{
                     boolean alreadyHas = EnchantmentUtils.doesItemAlreadyHasEnchant(getCurrentItem(),ench,index+minLevel);
                     boolean isConflict = EnchantmentUtils.findConflictingEnchantments(getCurrentItem(),ench).size()>=1;
                     boolean hasHigher = EnchantmentUtils.itemHasHigherEnchantmentLevel(getCurrentItem(),ench,index+minLevel);
+                    String lang = ((Player)inv.getViewers().get(0)).getLocale();
                     inv.setItem(12 + ((y * 9) + x), new ItemBuilder()
                             .setMaterial(Material.ENCHANTED_BOOK)
-                            .setName(EnchantmentUtils.getEnchantmentName(ench))
+                            .setName(EnchantmentUtils.getEnchantmentName(ench, lang))
+                            .setLang(lang)
                             .setIgnoreLevelRestriction(true)
                             .addEnchantment(ench, index+minLevel)
                             .addLore((cost>((Player)inv.getViewers().get(0)).getLevel() ? "&4" : "&b") + ("Cost: "+ cost))

@@ -3,7 +3,6 @@ package me.tropicalshadow.arcanetable;
 import me.tropicalshadow.arcanetable.gui.BaseGui;
 import me.tropicalshadow.arcanetable.gui.TableGui;
 import me.tropicalshadow.arcanetable.listener.BlockListener;
-import me.tropicalshadow.arcanetable.listener.GuiHook;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,22 +12,30 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Map;
 
 public final class ArcaneTable extends JavaPlugin {
 
     private static ArcaneTable INSTANCE;
-    private static Material enchantingTableMaterial;
+    public static Material ETABLEMATERIAL;
 
 
     @Override
     public void onEnable() {
         INSTANCE = this;
         try{
-            enchantingTableMaterial = Material.ENCHANTING_TABLE;
+            ETABLEMATERIAL = Material.ENCHANTING_TABLE;
         }catch(NoSuchFieldError err){
-            enchantingTableMaterial = Material.getMaterial("ENCHANTMENT_TABLE");
+            ETABLEMATERIAL = Material.getMaterial("ENCHANTMENT_TABLE");
         }
+        try {
+            if (!getDataFolder().exists()) {
+                boolean bool = getDataFolder().mkdir();
+            }
+            this.saveDefaultConfig();
+            reloadConfig();
+        }catch(Exception e) {e.printStackTrace();}
         addListener(new BlockListener());
 
         Logging.info("Plugin Enabled");
@@ -66,7 +73,7 @@ public final class ArcaneTable extends JavaPlugin {
     }
 
     public static Material getEnchantingTableMaterial(){
-        return enchantingTableMaterial;
+        return ETABLEMATERIAL;
     }
 
     public static ArcaneTable getPlugin() {

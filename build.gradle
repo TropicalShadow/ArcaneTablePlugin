@@ -5,17 +5,14 @@ plugins {
 }
 
 group = 'me.tropicalshadow'
-version = '1.0-SNAPSHOT'
+version = '1.2-SNAPSHOT'
 
 //sourceCompatibility = '1.8'
 //targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    maven {
-        name = 'skullcreator-repo'
-        url = 'https://dl.bintray.com/deanveloper/SkullCreator'
-    }
+
     maven {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'

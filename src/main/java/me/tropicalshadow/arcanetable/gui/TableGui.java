@@ -2,11 +2,13 @@ package me.tropicalshadow.arcanetable.gui;
 
 
 
+import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.objects.Paginator;
 import me.tropicalshadow.arcanetable.utils.EnchantmentUtils;
 import me.tropicalshadow.arcanetable.utils.ItemBuilder;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,6 +36,7 @@ public class TableGui extends BaseGui{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ArcaneTable.getPlugin().reloadConfig();
     }
 
     public ItemStack getCurrentItem(){
@@ -54,11 +58,11 @@ public class TableGui extends BaseGui{
                 event.setCancelled(true);
                 int slot = event.getSlot();
                 ItemStack tempItem = getCurrentItem();
+                ItemStack clicked = event.getCurrentItem();
                 if(slot==(9*2)+1&&tempItem!=null){
                     giveItemFromSlot(player,event.getInventory(), tempItem);
                     updateInventoryWithEnchantments(event.getInventory(),null,true);
                 }else if(tempItem != null){
-                    ItemStack clicked = event.getCurrentItem();
                     if(event.getSlot() == 4 || event.getSlot()==6){
                         if(clicked!=null && clicked.getType().equals(Material.PLAYER_HEAD)){
                             if(event.getSlot()==4) {
@@ -79,22 +83,27 @@ public class TableGui extends BaseGui{
                             updateInventoryWithEnchantments(event.getInventory(), getCurrentItem(), true);
                             return;
                         }
-                            giveItemFromSlot(player,event.getInventory(), tempItem);
-                            event.getWhoClicked().closeInventory();
+                        giveItemFromSlot(player,event.getInventory(), tempItem);
+                        event.setCancelled(true);
+                        Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()-> event.getWhoClicked().closeInventory());
 
                     }else if(clicked.getType().equals(Material.KNOWLEDGE_BOOK)){
                         updateInventoryWithEnchantments(event.getInventory(),clicked,false);
                     }else{
                         //Enchantment book
-                        Enchantment ench = new ArrayList<>(clicked.getEnchantments().keySet()).get(0);
+                        Enchantment ench = new ArrayList<>(clicked.getEnchantments().keySet()).get(0);//MAYBE REDO
                         int level = clicked.getEnchantments().get(ench);
                         int cost = EnchantmentUtils.getEnchantmentCost(ench,level);
-                        if(cost>player.getExpToLevel()){
-                            return;
-                        }
+
                         if(EnchantmentUtils.doesItemAlreadyHasEnchant(tempItem,ench,level)){
                             tempItem.removeEnchantment(ench);
+                            //TODO - TEST
+                            if(ArcaneTable.getPlugin().getConfig().getBoolean("ReturnXpOnDisenchant"))
+                                player.setLevel(player.getLevel()+cost);
                             updateInventoryWithEnchantments(event.getInventory(),tempItem,true);
+                            return;
+                        }
+                        if(cost>player.getExpToLevel()){
                             return;
                         }
                         player.setLevel(player.getLevel()-cost);
@@ -102,7 +111,8 @@ public class TableGui extends BaseGui{
                         updateInventoryWithEnchantments(event.getInventory(),newItem,true);
                     }
                 }else if(event.getCurrentItem() != null && event.getCurrentItem().getType().equals(Material.NETHER_STAR)){
-                    event.getWhoClicked().closeInventory();
+                    event.setCancelled(true);
+                    Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()-> event.getWhoClicked().closeInventory());
                 }
             }else{
                 event.setCancelled(true);
@@ -118,6 +128,8 @@ public class TableGui extends BaseGui{
     }
 
     private void giveItemFromSlot(Player player, Inventory inv, ItemStack tempItem) {
+        if(tempItem==null || tempItem.getType().equals(Material.AIR))
+            return;
         setEnchantingItem(inv,null);
         Map<Integer,ItemStack> leftOvers = player.getInventory().addItem(tempItem);
         leftOvers.forEach((index,item)-> player.getWorld().dropItem(player.getLocation(),item));
@@ -221,8 +233,10 @@ public class TableGui extends BaseGui{
             }
             inv.setItem(i,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
         }
-        inv.setItem((9*3)+1,new ItemBuilder().setMaterial(Material.ENCHANTING_TABLE).setName("&aPlace item above").addLore(ChatColor.WHITE+"Place item in slot above").addLore(ChatColor.WHITE+"to view enchantments").build());
+        inv.setItem((9*3)+1,new ItemBuilder().setMaterial(ArcaneTable.ETABLEMATERIAL).setName("&aPlace item above").addLore(ChatColor.WHITE+"Place item in slot above").addLore(ChatColor.WHITE+"to view enchantments").build());
         inv.setItem((9*5)+4,new ItemBuilder().setMaterial(Material.NETHER_STAR).setName("&aBack").addLore(ChatColor.WHITE+"Click to go back").build());
+        //if(ArcaneTable.getPlugin().getConfig().getBoolean("LegacyEnchantingButton"))
+        //    inv.setItem((9*5),new ItemBuilder().setMaterial(ArcaneTable.ETABLEMATERIAL).setName("Enchanting Table").addLore(ChatColor.WHITE+"Open vanilla enchanting table gui").build());
         displayArrows(inv, false);
         for(int x = 0; x < 5; x++ ){
             for (int y = 0; y < 4; y++){

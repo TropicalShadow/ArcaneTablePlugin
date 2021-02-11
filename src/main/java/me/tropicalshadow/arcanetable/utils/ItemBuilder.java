@@ -55,8 +55,8 @@ public class ItemBuilder {
         if(!this.lore.isEmpty())
              formattedLore = this.lore.stream().map((str)-> ChatColor.translateAlternateColorCodes('&',str)).collect(Collectors.toList());
         meta.setLore(formattedLore);
-
         enchantments.forEach((ench,level)-> meta.addEnchant(ench,level,this.ignoreLevelRestriction));
+
         item.setItemMeta(updateEnchantmentVisuals(meta));
         return item;
     }
@@ -64,7 +64,20 @@ public class ItemBuilder {
     public ItemMeta updateEnchantmentVisuals(ItemMeta meta){
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ArrayList<String> enchants = new ArrayList<>();
-        meta.getEnchants().forEach((ench,level)-> enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language)));
+        meta.getEnchants().forEach((ench,level)-> {
+            if(!enchants.contains(ChatColor.stripColor(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language))))
+            enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language));
+        });
+        if(enchants.isEmpty())
+            return meta;
+        if(meta.getLore()==null || meta.getLore().isEmpty()){
+            meta.setLore(enchants);
+            return meta;
+        }
+
+
+        enchants.addAll(meta.getLore());
+
         meta.setLore(enchants);
         return meta;
     }

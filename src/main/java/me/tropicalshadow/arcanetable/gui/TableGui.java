@@ -1,15 +1,14 @@
 package me.tropicalshadow.arcanetable.gui;
 
-
-
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.objects.Paginator;
 import me.tropicalshadow.arcanetable.utils.EnchantmentUtils;
 import me.tropicalshadow.arcanetable.utils.ItemBuilder;
+import me.tropicalshadow.arcanetable.utils.SkullUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -89,7 +88,7 @@ public class TableGui extends BaseGui{
                         }
                         return;
                     }
-                    if(clicked == null || (!clicked.getType().equals(Material.NETHER_STAR) && !clicked.getType().equals(Material.KNOWLEDGE_BOOK) && !clicked.getType().equals(Material.ENCHANTED_BOOK))){
+                    if(clicked == null || (!clicked.getType().equals(Material.NETHER_STAR) && !clicked.getType().equals((Material.getMaterial("KNOWLEDGE_BOOK"))!=null ? Material.getMaterial("KNOWLEDGE_BOOK") : Material.BOOK ) && !clicked.getType().equals(Material.ENCHANTED_BOOK))){
                         return;
                     }
                     if(clicked.getType().equals(Material.NETHER_STAR)){
@@ -102,7 +101,7 @@ public class TableGui extends BaseGui{
                         event.setCancelled(true);
                         Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()-> event.getWhoClicked().closeInventory());
 
-                    }else if(clicked.getType().equals(Material.KNOWLEDGE_BOOK)){
+                    }else if(clicked.getType().equals((Material.getMaterial("KNOWLEDGE_BOOK"))!=null ? Material.getMaterial("KNOWLEDGE_BOOK") : Material.BOOK )){
                         updateInventoryWithEnchantments(event.getInventory(),clicked,false);
                     }else{
                         //Enchantment book
@@ -121,9 +120,13 @@ public class TableGui extends BaseGui{
                         if(cost>player.getExpToLevel()){
                             return;
                         }
-                        //TODO - ACHIVEMENT TOODO
-                        //ArcaneTable.getPlugin().getServer().advancementIterator();
-                        //player.getAdvancementProgress();
+                        //TODO - ACHIVEMENT TODO
+                        try{
+                            AdvancementProgress advPrg = player.getAdvancementProgress((Advancement)ArcaneTable.ADVANCEMENT);
+                            advPrg.getRemainingCriteria().forEach(advPrg::awardCriteria);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                         player.setLevel(player.getLevel()-cost);
                         ItemStack newItem = EnchantmentUtils.applyEnchantToItem(tempItem,ench,level,false,true);
                         updateInventoryWithEnchantments(event.getInventory(),newItem,true);
@@ -158,7 +161,7 @@ public class TableGui extends BaseGui{
         if(unique==null){
             for(int x = 0; x < 5; x++ ){
                 for (int y = 0; y < 4; y++){
-                    inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
+                    inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GLASS).setColor(7).setName(" ").build());
                 }
             }
             ((TableGui)BaseGui.getGui(inv)).paginator.setPage(0);
@@ -176,14 +179,14 @@ public class TableGui extends BaseGui{
             for (int y = 0; y < 4; y++) {
                 for (int x = 0; x < 5; x++) {
                     if (index >= enchs.size()) {
-                        inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
+                        inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.GLASS).setColor(7).setName(" ").build());
                         continue;
                     }
                     Enchantment ench = enchs.get(index);
                     boolean isConflict = EnchantmentUtils.findConflictingEnchantments(unique,ench).size()>=1;
 
                     String lang = ((Player)inv.getViewers().get(0)).getLocale();
-                    inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.KNOWLEDGE_BOOK)
+                    inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.getMaterial("KNOWLEDGE_BOOK")!=null?Material.getMaterial("KNOWLEDGE_BOOK"):Material.BOOK)
                             .setName(EnchantmentUtils.getEnchantmentName(ench,lang))
                             .setIgnoreLevelRestriction(true)
                             .setLang(lang)
@@ -201,7 +204,7 @@ public class TableGui extends BaseGui{
             for (int y = 0; y < 4; y++) {
                 for (int x = 0; x < 5; x++) {
                     if (index >= maxLevel) {
-                        inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
+                        inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.GLASS).setColor(7).setName(" ").build());
                         continue;
                     }
                     int cost = EnchantmentUtils.EnchantmentCosts.getFromEnchant(ench).getCost(index+minLevel);
@@ -249,7 +252,7 @@ public class TableGui extends BaseGui{
             if(((9*2)+1)==i){
                 continue;
             }
-            inv.setItem(i,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
+            inv.setItem(i,new ItemBuilder().setName(" ").setMaterial(Material.GLASS).setColor(10).build());
         }
         inv.setItem((9*3)+1,new ItemBuilder().setMaterial(ArcaneTable.ETABLEMATERIAL).setName("&aPlace item above").addLore(ChatColor.WHITE+"Place item in slot above").addLore(ChatColor.WHITE+"to view enchantments").build());
         inv.setItem((9*5)+4,new ItemBuilder().setMaterial(Material.NETHER_STAR).setName("&aBack").addLore(ChatColor.WHITE+"Click to go back").build());
@@ -258,7 +261,7 @@ public class TableGui extends BaseGui{
         displayArrows(inv, false);
         for(int x = 0; x < 5; x++ ){
             for (int y = 0; y < 4; y++){
-                inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GRAY_STAINED_GLASS_PANE).setName(" ").build());
+                inv.setItem(12+((y*9)+x),new ItemBuilder().setMaterial(Material.GLASS).setColor(7).setName(" ").build());
             }
         }
 
@@ -267,7 +270,7 @@ public class TableGui extends BaseGui{
     public void displayArrows(Inventory inv, boolean active){
         if(active){
             inv.setItem(6 , new ItemBuilder()
-                    .setMaterial(Material.PLAYER_HEAD)
+                    .setMaterial(SkullUtils.createSkull().getType())
                     .setName("&2Next Page")
                     .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19")
                     .build());
@@ -278,14 +281,14 @@ public class TableGui extends BaseGui{
                     .build()
                     );
             inv.setItem(4, new ItemBuilder()
-                    .setMaterial(Material.PLAYER_HEAD)
+                    .setMaterial(SkullUtils.createSkull().getType())
                     .setName("&2Prev Page")
                     .setPlayerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=")
                     .build());
         }else{
-            inv.setItem(4,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
-            inv.setItem(5,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
-            inv.setItem(6,new ItemBuilder().setName(" ").setMaterial(Material.PURPLE_STAINED_GLASS_PANE).build());
+            inv.setItem(4,new ItemBuilder().setName(" ").setMaterial(Material.GLASS).setColor(10).build());
+            inv.setItem(5,new ItemBuilder().setName(" ").setMaterial(Material.GLASS).setColor(10).build());
+            inv.setItem(6,new ItemBuilder().setName(" ").setMaterial(Material.GLASS).setColor(10).build());
         }
 
     }

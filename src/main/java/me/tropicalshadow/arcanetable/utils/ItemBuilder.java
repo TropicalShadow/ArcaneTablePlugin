@@ -3,6 +3,7 @@ package me.tropicalshadow.arcanetable.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -19,6 +20,7 @@ public class ItemBuilder {
     private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiMmYzNmJmZGZhY2Q5NTdhNWY4YzQxY2NjZTM5ZWZlZjU0YzI1YWUxM2U0MDhiOGQ4YzFmYzQzMDhjYTcwIn19fQ==";
     private String language = Locale.ENGLISH.getLanguage();
     private boolean ignoreLevelRestriction = false;
+    private int color = 0;
     private Material material = Material.AIR;
     private String name = "Unamed Item";
     private int count = 1;
@@ -26,6 +28,10 @@ public class ItemBuilder {
     public ItemBuilder setName(String name){this.name = name;return this;}
     public ItemBuilder setLang(String lang){this.language = lang;return this;}
     public ItemBuilder setMaterial(Material mat){this.material = mat;return this;}
+    public ItemBuilder setColor(int color){
+        this.color = color;
+        return this;
+    }
     public ItemBuilder setCount(int count){this.count = count;return this;}
     public ItemBuilder addLore(String... str){
         if(str==null)return this;
@@ -42,8 +48,14 @@ public class ItemBuilder {
     }
     public ItemStack build(){
         ItemStack item;
-        if(this.material == Material.PLAYER_HEAD){
+        if(this.material == SkullUtils.createSkull().getType()){
             item = SkullUtils.itemFromBase64(this.playerHeadname);
+        }if(VersionUtils.isLegacy && this.material.equals(Material.GLASS)) {
+            Material mat = (Material.getMaterial("STAINED_GLASS_PANE") != null ? Material.getMaterial("STAINED_GLASS_PANE") : Material.GLASS);
+            assert mat != null;
+            item = new ItemStack(mat, this.count, (short) this.color);
+        }else if(!VersionUtils.isLegacy && this.material.equals(Material.GLASS)){
+            item = new ItemStack(VersionUtils.COLOUR.fromDamage(this.color).toColour());
         }else{
             item = new ItemStack(this.material);
         }

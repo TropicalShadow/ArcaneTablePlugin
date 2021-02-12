@@ -1,7 +1,9 @@
 package me.tropicalshadow.arcanetable.utils;
 
+import me.tropicalshadow.arcanetable.ArcaneTable;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -110,45 +112,47 @@ public class EnchantmentUtils {
         }
         return s.toString();
     }
+
+    //TODO - getByKey Doesn't work on 1.12.2
     public enum EnchantmentCosts{
-        PROTECTION(0,4,1, Enchantment.PROTECTION_ENVIRONMENTAL),
-        FIRE_PROTECTION(1,4,2,Enchantment.PROTECTION_FIRE),
-        FEATHER_FALLING(2,4,2,Enchantment.PROTECTION_FALL),
-        BLAST_PROTECTION(3,4,4,Enchantment.PROTECTION_EXPLOSIONS),
-        PROJECTILE_PROTECTION(4,4,2,Enchantment.PROTECTION_PROJECTILE),
-        THORNS(5,3,8,Enchantment.THORNS),
-        RESPIRATION(6,3,4,Enchantment.OXYGEN),
-        DEPTH_STRIDER(7,3,4,Enchantment.DEPTH_STRIDER),
-        AQUA_AFFNITY(8,1,4,Enchantment.WATER_WORKER),
-        SHARPNESS(9,5,1,Enchantment.DAMAGE_ALL),
-        SMITE(10,5,2,Enchantment.DAMAGE_UNDEAD),
-        BANE_OF_ARTHROPODS(11,5,2,Enchantment.DAMAGE_ARTHROPODS),
-        KNOCKBACK(12,2,2,Enchantment.KNOCKBACK),
-        FIRE_ASPECT(13,2,4,Enchantment.FIRE_ASPECT),
-        LOOTING(14,3,4,Enchantment.LOOT_BONUS_MOBS),
-        EFFICIENCY(15,5,1,Enchantment.DIG_SPEED),
-        SILK_TOUCH(16,1,8,Enchantment.SILK_TOUCH),
-        UNBREAKING(17,3,2,Enchantment.DURABILITY),
-        FORTUNE(18,3,4,Enchantment.LOOT_BONUS_BLOCKS),
-        POWER(19,5,1,Enchantment.ARROW_DAMAGE),
-        PUNCH(20,2,4,Enchantment.ARROW_KNOCKBACK),
-        FLAME(21,1,4,Enchantment.ARROW_FIRE),
-        INFINITY(22,1,8,Enchantment.ARROW_INFINITE),
-        LUCK_OF_THE_SEA(23,3,4,Enchantment.LUCK),
-        LURE(24,3,4,Enchantment.LURE),
-        FROST_WALKER(25,2,4,Enchantment.FROST_WALKER),
-        MENDING(26,1,4,Enchantment.MENDING),
-        CURSE_OF_BINDING(27,1,8,Enchantment.BINDING_CURSE),
-        CURSE_OF_VANISHING(28,1,8,Enchantment.VANISHING_CURSE),
-        IMPALING(29,5,4,Enchantment.IMPALING),
-        RIPTIDE(30,3,4,Enchantment.RIPTIDE),
-        LOYALTY(31,3,1,Enchantment.LOYALTY),
-        CHANNELING(32,1,8,Enchantment.CHANNELING),
-        MULTISHOT(33,1,4,Enchantment.MULTISHOT),
-        PIERCING(34,4,1,Enchantment.PIERCING),
-        QUICK_CHARGE(35,3,2,Enchantment.QUICK_CHARGE),
-        SOUL_SPEED(36,3,8,Enchantment.SOUL_SPEED),
-        SWEEPING_EDGE(37,3,4,Enchantment.SWEEPING_EDGE),
+        PROTECTION(0,4,1, Enchantment.getByKey(NamespacedKey.minecraft("protection"))),
+        FIRE_PROTECTION(1,4,2,Enchantment.getByKey(NamespacedKey.minecraft("fire_protection"))),
+        FEATHER_FALLING(2,4,2,Enchantment.getByKey(NamespacedKey.minecraft("feather_falling"))),
+        BLAST_PROTECTION(3,4,4,Enchantment.getByKey(NamespacedKey.minecraft("blast_protection"))),
+        PROJECTILE_PROTECTION(4,4,2,Enchantment.getByKey(NamespacedKey.minecraft("projectile_protection"))),
+        THORNS(5,3,8,Enchantment.getByKey(NamespacedKey.minecraft("thorns"))),
+        RESPIRATION(6,3,4,Enchantment.getByKey(NamespacedKey.minecraft("respiration"))),
+        DEPTH_STRIDER(7,3,4,Enchantment.getByKey(NamespacedKey.minecraft("depth_strider"))),
+        AQUA_AFFNITY(8,1,4,Enchantment.getByKey(NamespacedKey.minecraft("aqua_affinity"))),
+        SHARPNESS(9,5,1,Enchantment.getByKey(NamespacedKey.minecraft("sharpness"))),
+        SMITE(10,5,2,Enchantment.getByKey(NamespacedKey.minecraft("smite"))),
+        BANE_OF_ARTHROPODS(11,5,2,Enchantment.getByKey(NamespacedKey.minecraft("bane_of_arthropods"))),
+        KNOCKBACK(12,2,2,Enchantment.getByKey(NamespacedKey.minecraft("knockback"))),
+        FIRE_ASPECT(13,2,4,Enchantment.getByKey(NamespacedKey.minecraft("fire_aspect"))),
+        LOOTING(14,3,4,Enchantment.getByKey(NamespacedKey.minecraft("looting"))),
+        EFFICIENCY(15,5,1,Enchantment.getByKey(NamespacedKey.minecraft("efficiency"))),
+        SILK_TOUCH(16,1,8,Enchantment.getByKey(NamespacedKey.minecraft("silk_touch"))),
+        UNBREAKING(17,3,2,Enchantment.getByKey(NamespacedKey.minecraft("unbreaking"))),
+        FORTUNE(18,3,4,Enchantment.getByKey(NamespacedKey.minecraft("fortune"))),
+        POWER(19,5,1,Enchantment.getByKey(NamespacedKey.minecraft("power"))),
+        PUNCH(20,2,4,Enchantment.getByKey(NamespacedKey.minecraft("punch"))),
+        FLAME(21,1,4,Enchantment.getByKey(NamespacedKey.minecraft("flame"))),
+        INFINITY(22,1,8,Enchantment.getByKey(NamespacedKey.minecraft("infinity"))),
+        LUCK_OF_THE_SEA(23,3,4,Enchantment.getByKey(NamespacedKey.minecraft("luck_of_the_sea"))),
+        LURE(24,3,4,Enchantment.getByKey(NamespacedKey.minecraft("lure"))),
+        FROST_WALKER(25,2,4,Enchantment.getByKey(NamespacedKey.minecraft("frost_walker"))),
+        MENDING(26,1,4,Enchantment.getByKey(NamespacedKey.minecraft("mending"))),
+        CURSE_OF_BINDING(27,1,8,Enchantment.getByKey(NamespacedKey.minecraft("binding_curse"))),
+        CURSE_OF_VANISHING(28,1,8,Enchantment.getByKey(NamespacedKey.minecraft("vanishing_curse"))),
+        IMPALING(29,5,4,Enchantment.getByKey(NamespacedKey.minecraft("impaling"))),
+        RIPTIDE(30,3,4,Enchantment.getByKey(NamespacedKey.minecraft("riptide"))),
+        LOYALTY(31,3,1,Enchantment.getByKey(NamespacedKey.minecraft("loyalty"))),
+        CHANNELING(32,1,8,Enchantment.getByKey(NamespacedKey.minecraft("channeling"))),
+        MULTISHOT(33,1,4,Enchantment.getByKey(NamespacedKey.minecraft("multishot"))),
+        PIERCING(34,4,1,Enchantment.getByKey(NamespacedKey.minecraft("piercing"))),
+        QUICK_CHARGE(35,3,2,Enchantment.getByKey(NamespacedKey.minecraft("quick_charge"))),
+        SOUL_SPEED(36,3,8,Enchantment.getByKey(NamespacedKey.minecraft("soul_speed"))),
+        SWEEPING_EDGE(37,3,4,Enchantment.getByKey(NamespacedKey.minecraft("sweeping"))),
         UNKNOWN(6699,0,1,null)
         ;
 

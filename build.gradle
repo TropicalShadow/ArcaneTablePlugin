@@ -7,8 +7,8 @@ plugins {
 group = 'me.tropicalshadow'
 version = '1.3-SNAPSHOT'
 
-//sourceCompatibility = '1.8'
-//targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()

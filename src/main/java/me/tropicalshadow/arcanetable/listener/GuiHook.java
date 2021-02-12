@@ -1,5 +1,6 @@
 package me.tropicalshadow.arcanetable.listener;
 
+import com.google.common.base.Preconditions;
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.gui.BaseGui;
 import org.bukkit.Bukkit;
@@ -14,6 +15,8 @@ import org.bukkit.inventory.InventoryView;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.bukkit.inventory.InventoryView.OUTSIDE;
 
 public class GuiHook implements Listener {
 
@@ -32,13 +35,28 @@ public class GuiHook implements Listener {
             return;
         }
         InventoryView view = event.getView();
-        Inventory inventory = view.getInventory(event.getRawSlot());
+        Inventory inventory = getInventory(view,event.getRawSlot());
         if(inventory == null){
             //Clicked outside both inventories
             return;
         }
         gui.callOnClick(event);
         //detect bottom or top inv
+    }
+    public final Inventory getInventory(InventoryView inv,int rawSlot) {
+        // Slot may be -1 if not properly detected due to client bug
+        // e.g. dropping an item into part of the enchantment list section of an enchanting table
+        if (rawSlot == OUTSIDE || rawSlot == -1) {
+            return null;
+        }
+        Preconditions.checkArgument(rawSlot >= 0, "Negative, non outside slot %s", rawSlot);
+        Preconditions.checkArgument(rawSlot < inv.countSlots(), "Slot %s greater than inventory slot count", rawSlot);
+
+        if (rawSlot < inv.getTopInventory().getSize()) {
+            return inv.getTopInventory();
+        } else {
+            return inv.getBottomInventory();
+        }
     }
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event){

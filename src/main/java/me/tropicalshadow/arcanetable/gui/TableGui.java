@@ -6,17 +6,16 @@ import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.objects.Paginator;
 import me.tropicalshadow.arcanetable.utils.EnchantmentUtils;
 import me.tropicalshadow.arcanetable.utils.ItemBuilder;
-import me.tropicalshadow.arcanetable.utils.Logging;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,6 +24,7 @@ import java.util.*;
 public class TableGui extends BaseGui{
 
     public Paginator paginator;
+    private Block block;
 
     public TableGui(){
         super("Arcane Table",6);
@@ -39,6 +39,12 @@ public class TableGui extends BaseGui{
         ArcaneTable.getPlugin().reloadConfig();
     }
 
+    public Block getBlock(){
+        return this.block;
+    }
+    public void setEnchantmentTable(Block block){
+        this.block = block;
+    }
     public ItemStack getCurrentItem(){
         return getInventory().getItem((9*2)+1);
     }
@@ -46,6 +52,11 @@ public class TableGui extends BaseGui{
         inv.setItem((9*2)+1,item);
     }
 
+    public void closeInventorySafely(Inventory inv){
+        inv.getViewers().forEach(human->
+            giveItemFromSlot((Player)human,inv, getCurrentItem())
+        );
+    }
 
     public void clickInventoryEvent(InventoryClickEvent event){
         BaseGui gui = BaseGui.getGui(event.getInventory());
@@ -106,6 +117,8 @@ public class TableGui extends BaseGui{
                         if(cost>player.getExpToLevel()){
                             return;
                         }
+                        ArcaneTable.getPlugin().getServer().advancementIterator();
+                        player.getAdvancementProgress()
                         player.setLevel(player.getLevel()-cost);
                         ItemStack newItem = EnchantmentUtils.applyEnchantToItem(tempItem,ench,level,false,true);
                         updateInventoryWithEnchantments(event.getInventory(),newItem,true);

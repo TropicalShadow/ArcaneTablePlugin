@@ -2,7 +2,7 @@ package me.tropicalshadow.arcanetable.listener;
 
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.gui.TableGui;
-import org.bukkit.Material;
+import me.tropicalshadow.arcanetable.utils.Logging;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,8 +24,6 @@ public class BlockListener implements Listener {
             }
         }
     }
-    //DONE - on block break close all inventories that are assosiated with it
-    //TODO - TEST IF THIS WORKS!!
     @EventHandler()
     public void onBreakingOfEnchantmentTable(BlockBreakEvent event){
         if(!event.getBlock().getType().equals(ArcaneTable.ETABLEMATERIAL))return;

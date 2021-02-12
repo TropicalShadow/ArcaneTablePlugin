@@ -53,9 +53,13 @@ public class TableGui extends BaseGui{
     }
 
     public void closeInventorySafely(Inventory inv){
-        inv.getViewers().forEach(human->
-            giveItemFromSlot((Player)human,inv, getCurrentItem())
-        );
+        Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()->{
+            inv.getViewers().forEach(human->{
+                giveItemFromSlot((Player)human,inv, getCurrentItem());
+                human.closeInventory();
+            });
+        });
+
     }
 
     public void clickInventoryEvent(InventoryClickEvent event){
@@ -117,8 +121,9 @@ public class TableGui extends BaseGui{
                         if(cost>player.getExpToLevel()){
                             return;
                         }
-                        ArcaneTable.getPlugin().getServer().advancementIterator();
-                        player.getAdvancementProgress()
+                        //TODO - ACHIVEMENT TOODO
+                        //ArcaneTable.getPlugin().getServer().advancementIterator();
+                        //player.getAdvancementProgress();
                         player.setLevel(player.getLevel()-cost);
                         ItemStack newItem = EnchantmentUtils.applyEnchantToItem(tempItem,ench,level,false,true);
                         updateInventoryWithEnchantments(event.getInventory(),newItem,true);

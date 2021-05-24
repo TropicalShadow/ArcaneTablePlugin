@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class ItemBuilder {
 
-    private Map<Enchantment,Integer> enchantments = new HashMap<>();
-    private ArrayList<String> lore = new ArrayList<>();
+    private final Map<Enchantment,Integer> enchantments = new HashMap<>();
+    private final ArrayList<String> lore = new ArrayList<>();
     private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiMmYzNmJmZGZhY2Q5NTdhNWY4YzQxY2NjZTM5ZWZlZjU0YzI1YWUxM2U0MDhiOGQ4YzFmYzQzMDhjYTcwIn19fQ==";
     private String language = Locale.ENGLISH.getLanguage();
     private boolean ignoreLevelRestriction = false;

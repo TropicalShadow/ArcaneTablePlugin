@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 public class Logging {
 
-    private static String PREFIX = ChatColor.BLUE+"[AT] ";
+    private static final String PREFIX = ChatColor.BLUE+"[AT] ";
 
     public static void info(Object obj){
         Bukkit.getServer().getLogger().info(PREFIX+ChatColor.GREEN.toString()+obj);

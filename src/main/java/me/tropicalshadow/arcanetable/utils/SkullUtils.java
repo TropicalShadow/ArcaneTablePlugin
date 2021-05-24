@@ -323,9 +323,9 @@ public class SkullUtils{
         EIGHT("Black 8","0fec4608-939a-419f-90f5-b00ee1274945","eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODRhZDEyYzJmMjFhMTk3MmYzZDJmMzgxZWQwNWE2Y2MwODg0ODlmY2ZkZjY4YTcxM2IzODc0ODJmZTkxZTIifX19"),
         NINE("Black 9","699e1fb2-6ba4-4004-b0e7-5ce8754c271a","eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWY3YWEwZDk3OTgzY2Q2N2RmYjY3YjdkOWQ5YzY0MWJjOWFhMzRkOTY2MzJmMzcyZDI2ZmVlMTlmNzFmOGI3In19fQ=="),
         TEN("Black 10","092a483c-397d-4b42-9e67-26cc1d16ade6","eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjBjZjk3OTRmYmMwODlkYWIwMzcxNDFmNjc4NzVhYjM3ZmFkZDEyZjNiOTJkYmE3ZGQyMjg4ZjFlOTg4MzYifX19");
-        private String uname;
-        private UUID headId;
-        private String b64;
+        private final String uname;
+        private final UUID headId;
+        private final String b64;
 
 
         HEADS(String name, String uuid, String b64){

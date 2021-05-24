@@ -1,6 +1,5 @@
 package me.tropicalshadow.arcanetable.utils;
 
-import me.tropicalshadow.arcanetable.ArcaneTable;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -8,10 +7,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class EnchantmentUtils {
@@ -32,6 +29,21 @@ public class EnchantmentUtils {
         }
         return output;
     }
+    
+    public static void purgeEnchantmentFromItem(ItemStack item, Enchantment ench, String lang){
+        if(!item.containsEnchantment(ench))return;
+        int level = item.getEnchantmentLevel(ench);
+        assert item.getItemMeta() != null;
+        List<String> lore = Objects.requireNonNullElse(item.getItemMeta().getLore(), new ArrayList<String>());
+        Collection<String> loreToRemove = lore.stream().filter(line -> ChatColor.stripColor(line).equalsIgnoreCase(getEnchantDisplayWithRomanNum(ench,level,lang))).collect(Collectors.toList());
+        if(loreToRemove.size()>0){
+            lore.removeAll(loreToRemove);
+            item.getItemMeta().setLore(lore);
+        }
+        item.removeEnchantment(ench);
+
+    }
+    
     public static String getEnchantmentName(Enchantment ench, @Nullable String language){
         EnchantmentCosts en = EnchantmentCosts.getFromEnchant(ench);
         String base;

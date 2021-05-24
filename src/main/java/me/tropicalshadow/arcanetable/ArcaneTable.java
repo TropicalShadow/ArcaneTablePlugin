@@ -6,8 +6,6 @@ import me.tropicalshadow.arcanetable.listener.BlockListener;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import me.tropicalshadow.arcanetable.utils.VersionUtils;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -15,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.*;
 
 public final class ArcaneTable extends JavaPlugin {
@@ -31,7 +28,7 @@ public final class ArcaneTable extends JavaPlugin {
         VersionUtils.versionControl();
         try {
             if (!getDataFolder().exists()) {
-                boolean bool = getDataFolder().mkdir();
+                getDataFolder().mkdir();
             }
             this.saveDefaultConfig();
             reloadConfig();
@@ -42,12 +39,12 @@ public final class ArcaneTable extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        Timber();
+        timber();
         HandlerList.unregisterAll(this);
         Logging.info("Plugin Disabled");
         INSTANCE = null;
     }
-    public static void Timber(){
+    public static void timber(){
         BaseGui.GUI_INVETORIES.forEach((inv,gui)->{
             if(gui instanceof TableGui){
                 TableGui enchantmentTable = ((TableGui) gui);

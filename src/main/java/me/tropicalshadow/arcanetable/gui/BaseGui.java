@@ -32,8 +32,8 @@ public class BaseGui implements InventoryHolder {
     public boolean canClick = true;
     private Inventory inv = null;
     private boolean updating;
-    private String name;
-    private int rows;
+    private final String name;
+    private final int rows;
 
     public BaseGui(){
         this("BaseGui",1);

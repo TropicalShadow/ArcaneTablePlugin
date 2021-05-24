@@ -2,13 +2,13 @@ package me.tropicalshadow.arcanetable.gui;
 
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.objects.Paginator;
+import me.tropicalshadow.arcanetable.utils.AdvancmentsUtils;
 import me.tropicalshadow.arcanetable.utils.EnchantmentUtils;
 import me.tropicalshadow.arcanetable.utils.ItemBuilder;
 import me.tropicalshadow.arcanetable.utils.SkullUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -52,12 +52,10 @@ public class TableGui extends BaseGui{
     }
 
     public void closeInventorySafely(Inventory inv){
-        Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()->{
-            inv.getViewers().forEach(human->{
-                giveItemFromSlot((Player)human,inv, getCurrentItem());
-                human.closeInventory();
-            });
-        });
+        Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()-> inv.getViewers().forEach(human->{
+            giveItemFromSlot((Player)human,inv, getCurrentItem());
+            human.closeInventory();
+        }));
 
     }
 
@@ -110,7 +108,9 @@ public class TableGui extends BaseGui{
                         int cost = EnchantmentUtils.getEnchantmentCost(ench,level);
 
                         if(EnchantmentUtils.doesItemAlreadyHasEnchant(tempItem,ench,level)){
-                            tempItem.removeEnchantment(ench);
+                            //TODO some stupid plugins re-add the enchantment if its still in the lore
+                            String lang = player.getLocale();
+                            EnchantmentUtils.purgeEnchantmentFromItem(tempItem,ench,lang);
                             //TODO - TEST
                             if(ArcaneTable.getPlugin().getConfig().getBoolean("ReturnXpOnDisenchant"))
                                 player.setLevel(player.getLevel()+cost);
@@ -120,13 +120,7 @@ public class TableGui extends BaseGui{
                         if(cost>player.getExpToLevel()){
                             return;
                         }
-                        //TODO - ACHIVEMENT TODO
-                        try{
-                            AdvancementProgress advPrg = player.getAdvancementProgress((Advancement)ArcaneTable.ADVANCEMENT);
-                            advPrg.getRemainingCriteria().forEach(advPrg::awardCriteria);
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
+                        new AdvancmentsUtils((Advancement)ArcaneTable.ADVANCEMENT).grant(player);
                         player.setLevel(player.getLevel()-cost);
                         ItemStack newItem = EnchantmentUtils.applyEnchantToItem(tempItem,ench,level,false,true);
                         updateInventoryWithEnchantments(event.getInventory(),newItem,true);
@@ -256,8 +250,6 @@ public class TableGui extends BaseGui{
         }
         inv.setItem((9*3)+1,new ItemBuilder().setMaterial(ArcaneTable.ETABLEMATERIAL).setName("&aPlace item above").addLore(ChatColor.WHITE+"Place item in slot above").addLore(ChatColor.WHITE+"to view enchantments").build());
         inv.setItem((9*5)+4,new ItemBuilder().setMaterial(Material.NETHER_STAR).setName("&aBack").addLore(ChatColor.WHITE+"Click to go back").build());
-        //if(ArcaneTable.getPlugin().getConfig().getBoolean("LegacyEnchantingButton"))
-        //    inv.setItem((9*5),new ItemBuilder().setMaterial(ArcaneTable.ETABLEMATERIAL).setName("Enchanting Table").addLore(ChatColor.WHITE+"Open vanilla enchanting table gui").build());
         displayArrows(inv, false);
         for(int x = 0; x < 5; x++ ){
             for (int y = 0; y < 4; y++){

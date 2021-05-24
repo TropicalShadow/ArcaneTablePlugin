@@ -9,6 +9,7 @@ The Arcane Table will allow you to enchant you item as many times...
 ------------------------------------------
 ## Versions 
 
+[1.4-SNAPSHOT](#v14-snapshot--more-fixes) Code Refactoring
 
 [1.3-SNAPSHOT](#v13-snapshot--close-gui-on-block-break) Inv Close On Block Break
 
@@ -21,6 +22,11 @@ The Arcane Table will allow you to enchant you item as many times...
 
 
 ---
+
+### v1.4-SNAPSHOT | More fixes
+
+- Refactoring of Advancement code
+- 
 
 ### v1.3-SNAPSHOT | Utils Fixes
 

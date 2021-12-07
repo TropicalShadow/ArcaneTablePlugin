@@ -25,13 +25,18 @@ The Arcane Table will allow you to enchant you item as many times...
 
 ### v1.4-SNAPSHOT | More fixes
 
-- Refactoring of Advancement code
-- 
+- [x] Refactoring of Advancement code
+- [x] Language File
 
 ### v1.3-SNAPSHOT | Utils Fixes
 
-- Breaking Arcane Table while in gui will close
-- Advancement on enchant
+- [x] Breaking Arcane Table while in gui will close
+- [x] Advancement on enchant
+- [x] Backwards compatibility with 1.12. 
+- [ ] Support for Advanced Enchantments 
+- [ ] Language File
+
+
 
 ### v1.2-SNAPSHOT | Config
 

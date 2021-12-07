@@ -12,7 +12,11 @@ public class VersionUtils {
 
     public static void versionControl(){
         Logging.info(version);
-        isLegacy = (Integer.parseInt(version.split("\\.")[1]))<13;
+        if(version.split("\\.")[1].endsWith(")")){
+            isLegacy = false;
+        }else {
+            isLegacy = (Integer.parseInt(version.split("\\.")[1])) < 13;
+        }
 
         try{
             ArcaneTable.ETABLEMATERIAL = Material.ENCHANTING_TABLE;

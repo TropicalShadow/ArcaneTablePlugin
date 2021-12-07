@@ -1,0 +1,17 @@
+place-item-in-slot: "Place item in slot above"
+place-item-above: "Place item above"
+already-has:
+  line-1: "&4Item already has this enchantment"
+  line-2: "&4Clicking will remove this enchant"
+enchantment-has-conflict: "&4Enchantment conflicts with current enchants"
+conflict:
+  line-1: "&5Enchantment conflicts with current enchants"
+  line-2: "&5Clicking will remove conflicting enchants"
+has-higher:
+  line-1: "&bItem already has higher level"
+  line-2: "&bof this enchantment"
+
+page:
+  current: "Page %1$s / %2%s"
+  next: "Next Page"
+  prev: "Prev Page"

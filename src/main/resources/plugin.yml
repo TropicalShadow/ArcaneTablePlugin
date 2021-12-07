@@ -1,6 +1,6 @@
 name: ArcaneTable
 version: @version@
 main: me.tropicalshadow.arcanetable.ArcaneTable
-api-version: 1.13
+api-version: 1.18
 authors: [ TropicalShadow ]
 description: Amazing new design for enchanting tables

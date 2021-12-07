@@ -2,6 +2,9 @@ package me.tropicalshadow.arcanetable.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -16,27 +19,33 @@ import java.util.stream.Collectors;
 public class ItemBuilder {
 
     private final Map<Enchantment,Integer> enchantments = new HashMap<>();
-    private final ArrayList<String> lore = new ArrayList<>();
+    private final ArrayList<Component> lore = new ArrayList<>();
     private String playerHeadname = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDhiMmYzNmJmZGZhY2Q5NTdhNWY4YzQxY2NjZTM5ZWZlZjU0YzI1YWUxM2U0MDhiOGQ4YzFmYzQzMDhjYTcwIn19fQ==";
-    private String language = Locale.ENGLISH.getLanguage();
+
     private boolean ignoreLevelRestriction = false;
     private int color = 0;
     private Material material = Material.AIR;
-    private String name = "Unamed Item";
+    private Component name = Component.text("Unamed Item");
     private int count = 1;
 
-    public ItemBuilder setName(String name){this.name = name;return this;}
-    public ItemBuilder setLang(String lang){this.language = lang;return this;}
+    public ItemBuilder setName(Component name){this.name = name;return this;}
     public ItemBuilder setMaterial(Material mat){this.material = mat;return this;}
     public ItemBuilder setColor(int color){
         this.color = color;
         return this;
     }
     public ItemBuilder setCount(int count){this.count = count;return this;}
+    public ItemBuilder addLore(Component... str){
+        if(str==null)return this;
+        for (Component s : str) {
+            if(s!=null)this.lore.add(s);
+        }
+        return this;
+    }
     public ItemBuilder addLore(String... str){
         if(str==null)return this;
         for (String s : str) {
-            if(s!=null)this.lore.add(s);
+            if(s!=null)this.lore.add(Component.text(ChatColor.translateAlternateColorCodes('&',s)));
         }
         return this;
     }
@@ -62,12 +71,10 @@ public class ItemBuilder {
         item.setAmount(this.count);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',this.name));
-        List<String> formattedLore = new ArrayList<>();
-        if(!this.lore.isEmpty())
-             formattedLore = this.lore.stream().map((str)-> ChatColor.translateAlternateColorCodes('&',str)).collect(Collectors.toList());
-        meta.setLore(formattedLore);
+        meta.displayName(this.name.decorate(TextDecoration.BOLD));
+        meta.lore(lore);
         enchantments.forEach((ench,level)-> meta.addEnchant(ench,level,this.ignoreLevelRestriction));
+
 
         item.setItemMeta(updateEnchantmentVisuals(meta));
         return item;
@@ -75,22 +82,19 @@ public class ItemBuilder {
 
     public ItemMeta updateEnchantmentVisuals(ItemMeta meta){
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        ArrayList<String> enchants = new ArrayList<>();
+        ArrayList<Component> enchants = new ArrayList<>();
         meta.getEnchants().forEach((ench,level)-> {
-            if(!enchants.contains(ChatColor.stripColor(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language))))
-            enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level,this.language));
+            if(!enchants.contains(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level)))
+            enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level));
         });
         if(enchants.isEmpty())
             return meta;
-        if(meta.getLore()==null || meta.getLore().isEmpty()){
-            meta.setLore(enchants);
-            return meta;
-        }
+        if(Objects.requireNonNull(meta.lore()).isEmpty() || meta.lore() == null)
+            meta.lore(lore);
 
+        enchants.addAll(meta.lore());
 
-        enchants.addAll(meta.getLore());
-
-        meta.setLore(enchants);
+        meta.lore(enchants);
         return meta;
     }
 

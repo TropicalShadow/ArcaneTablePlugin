@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.tropicalshadow"
-version = "1.4-SNAPSHOT"
+version = "1.4.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -34,11 +34,8 @@ dependencies {
 
 tasks {
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-        archiveFileName.set("ArcaneTable.jar")
+        archiveFileName.set("ArcaneTable-1.4.1-SNAPSHOT.jar")
         relocate("kotlin", "com.github.tropicalshadow.arcanetable.dependencies.kotlin")
-        relocate("kotlinx", "com.github.tropicalshadow.arcanetable.dependencies.kotlinx")
-        relocate("org.jetbrains", "com.github.tropicalshadow.arcanetable.dependencies.jetbrains")
-        relocate("org.intellij", "com.github.tropicalshadow.arcanetable.dependencies.jetbrains.intellij")
         exclude("DebugProbesKt.bin")
         exclude("META-INF/**")
     }

@@ -183,7 +183,7 @@ public class TableGui extends BaseGui{
                     inv.setItem(12 + ((y * 9) + x), new ItemBuilder().setMaterial(Material.getMaterial("KNOWLEDGE_BOOK")!=null?Material.getMaterial("KNOWLEDGE_BOOK"):Material.BOOK)
                             .setName(EnchantmentUtils.getEnchantmentTranslateName(ench))
                             .setIgnoreLevelRestriction(true)
-                            .addLore(isConflict ? Component.text(ConfigurableLanguage.ENCHANTMENT_HAS_CONFLICT.getText()) : null)
+                            .addLore(isConflict ? ConfigurableLanguage.ENCHANTMENT_HAS_CONFLICT.getText() : null)
                             .addEnchantment(ench, 1)
                             .build());
                     index++;

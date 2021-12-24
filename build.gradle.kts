@@ -34,7 +34,7 @@ dependencies {
 
 tasks {
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-        archiveFileName.set("ArcaneTable-1.4.1-SNAPSHOT.jar")
+        archiveFileName.set("ArcaneTable-"+project.version+".jar")
         relocate("kotlin", "com.github.tropicalshadow.arcanetable.dependencies.kotlin")
         exclude("DebugProbesKt.bin")
         exclude("META-INF/**")

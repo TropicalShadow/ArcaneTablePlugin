@@ -2,7 +2,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
 group = "me.tropicalshadow"
@@ -11,31 +12,26 @@ version = "1.4.1-SNAPSHOT"
 repositories {
     mavenCentral()
 
-    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
-    maven {
-        name = "sonatype"
-        url = uri("https://oss.sonatype.org/content/groups/public/")
-    }
-    maven {
-        name = "minecraft-repo"
-        url = uri("https://libraries.minecraft.net/")
-    }
-    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
+    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://oss.sonatype.org/content/groups/public/")
+    maven("https://libraries.minecraft.net/")
+    maven("https://papermc.io/repo/repository/maven-public/")
 
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.21")
-
-
 }
 
 tasks {
+    runServer {
+        minecraftVersion("1.20.1")
+    }
+
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
         archiveFileName.set("ArcaneTable-"+project.version+".jar")
-        relocate("kotlin", "com.github.tropicalshadow.arcanetable.dependencies.kotlin")
         exclude("DebugProbesKt.bin")
         exclude("META-INF/**")
     }

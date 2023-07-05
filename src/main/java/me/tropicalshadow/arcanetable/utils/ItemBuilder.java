@@ -1,20 +1,19 @@
 package me.tropicalshadow.arcanetable.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ItemBuilder {
 
@@ -25,10 +24,10 @@ public class ItemBuilder {
     private boolean ignoreLevelRestriction = false;
     private int color = 0;
     private Material material = Material.AIR;
-    private Component name = Component.text("Unamed Item");
+    private Component name = Component.text("Unamed Item").colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     private int count = 1;
 
-    public ItemBuilder setName(Component name){this.name = name;return this;}
+    public ItemBuilder setName(Component name){this.name = name.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);return this;}
     public ItemBuilder setMaterial(Material mat){this.material = mat;return this;}
     public ItemBuilder setColor(int color){
         this.color = color;
@@ -38,14 +37,14 @@ public class ItemBuilder {
     public ItemBuilder addLore(Component... str){
         if(str==null)return this;
         for (Component s : str) {
-            if(s!=null)this.lore.add(s);
+            if(s!=null)this.lore.add(s.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
         return this;
     }
     public ItemBuilder addLore(String... str){
         if(str==null)return this;
         for (String s : str) {
-            if(s!=null)this.lore.add(Component.text(ChatColor.translateAlternateColorCodes('&',s)));
+            if(s!=null)this.lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(s).colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
         return this;
     }
@@ -85,7 +84,7 @@ public class ItemBuilder {
         ArrayList<Component> enchants = new ArrayList<>();
         meta.getEnchants().forEach((ench,level)-> {
             if(!enchants.contains(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level)))
-            enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level));
+                enchants.add(EnchantmentUtils.getEnchantDisplayWithRomanNum(ench,level));
         });
         if(enchants.isEmpty())
             return meta;

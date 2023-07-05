@@ -1,3 +1,9 @@
-#Shoudl the plugin give player XP for removing an enchantment?
-#XP levels will be the same as cost
-ReturnXpOnDisenchant: false
+#####################################################
+#                  ArcaneTable Config               #
+#####################################################
+
+disenchant:
+  # enable or disable the disenchant feature
+  enabled: true
+  # percentage of XP to return -1 to disable 100 to return all
+  xp-percentage: 100

@@ -1,13 +1,15 @@
 # Arcane Table
 
-> This Minecraft Plugin is in pre-beta
+> This Minecraft Plugin is in beta, contact `RealName_123#2570` for help or bugs
 
 ```
 This is a Minecraft Spigot Plugin which turns the default Enchantment table into a Magical Arcane Table,
-The Arcane Table will allow you to enchant you item as many times...
+The Arcane Table will allow you to enchant your item as many times...
 ```
 ------------------------------------------
 ## Versions 
+
+[1.5-SNAPSHOT](#v15-snapshot--mc-120-support) MC 1.20 Support
 
 [1.4.1-SNAPSHOT](#v141-snapshot--fixed-display-for-conflicting-enchants) Conflict Enchatn Fix
 
@@ -24,6 +26,15 @@ The Arcane Table will allow you to enchant you item as many times...
 
 
 ---
+
+### v1.5-SNAPSHOT | MC 1.20 support
+
+- [x] MC 1.20 Support
+- [x] Recode of core plugin
+- [x] Added percentage xp return on disenchant
+- [x] BREAKING CHANGE - all config files have been changed to support new features
+- [x] Config for xp return on disenchant, percentage of xp returned
+
 ### v1.4.1-SNAPSHOT | Fixed Display For Conflicting Enchants
 
 - formatting issue related to conflicting enchantments has been resolved

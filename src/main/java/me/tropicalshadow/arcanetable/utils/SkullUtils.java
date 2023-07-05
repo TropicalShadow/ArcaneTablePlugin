@@ -42,17 +42,6 @@ public class SkullUtils{
     }
 
     /**
-     * Creates a player skull item with the skin based on a player's name.
-     *
-     * @param name The Player's name.
-     * @return The head of the Player.
-     * @deprecated names don't make for good identifiers.
-     */
-    public static ItemStack itemFromName(String name) {
-        return itemWithName(createSkull(), name);
-    }
-
-    /**
      * Creates a player skull item with the skin based on a player's UUID.
      *
      * @param id The Player's UUID.
@@ -145,10 +134,9 @@ public class SkullUtils{
         notNull(item, "item");
         notNull(base64, "base64");
 
-        if (!(item.getItemMeta() instanceof SkullMeta)) {
+        if (!(item.getItemMeta() instanceof SkullMeta meta)) {
             return null;
         }
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
         mutateItemMeta(meta, base64);
         item.setItemMeta(meta);
 
@@ -244,7 +232,7 @@ public class SkullUtils{
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl.toString() + "\"}}}";
+        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl + "\"}}}";
         return Base64.getEncoder().encodeToString(toEncode.getBytes());
     }
 

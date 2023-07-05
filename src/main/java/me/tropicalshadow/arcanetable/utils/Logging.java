@@ -1,19 +1,20 @@
 package me.tropicalshadow.arcanetable.utils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.tropicalshadow.arcanetable.ArcaneTable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Logging {
 
-    private static final String PREFIX = ChatColor.BLUE+"[AT] ";
+    private static final Component PREFIX = Component.text("[AT] ", NamedTextColor.AQUA);
 
-    public static void info(Object obj){
-        Bukkit.getServer().getLogger().info(PREFIX+ChatColor.GREEN.toString()+obj);
+    public static void info(String obj){
+        ArcaneTable.getPlugin().getComponentLogger().info(PREFIX.append(Component.text(obj, NamedTextColor.GREEN)));
     }
-    public static void warning(Object obj){
-        Bukkit.getServer().getLogger().warning(PREFIX+ChatColor.YELLOW.toString()+obj);
+    public static void warning(String obj){
+        ArcaneTable.getPlugin().getComponentLogger().warn(PREFIX.append(Component.text(obj, NamedTextColor.YELLOW)));
     }
-    public static void danger(Object obj){
-        Bukkit.getServer().getLogger().info(PREFIX+ChatColor.RED.toString()+obj);
+    public static void danger(String obj){
+        ArcaneTable.getPlugin().getComponentLogger().error(PREFIX.append(Component.text(obj, NamedTextColor.RED)));
     }
 }

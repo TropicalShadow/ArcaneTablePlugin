@@ -8,6 +8,8 @@ import org.bukkit.NamespacedKey;
 public class VersionUtils {
 
     public static String version = Bukkit.getVersion();
+
+    public static int versionID = (Integer.parseInt(version.split("\\.")[1]));
     public static boolean isLegacy = false;
 
     public static void versionControl(){
@@ -15,7 +17,7 @@ public class VersionUtils {
         if(version.split("\\.")[1].endsWith(")")){
             isLegacy = false;
         }else {
-            isLegacy = (Integer.parseInt(version.split("\\.")[1])) < 13;
+            isLegacy = versionID < 13;
         }
 
         try{
@@ -35,8 +37,8 @@ public class VersionUtils {
         PURPLE(10),
         GRAY(7);
 
-        public String name;
-        public int dmg;
+        public final String name;
+        public final int dmg;
 
         COLOUR(int dmg){
             this.name = this.name();

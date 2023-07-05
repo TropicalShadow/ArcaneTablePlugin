@@ -13,79 +13,71 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.bukkit.inventory.InventoryView.OUTSIDE;
 
 public class GuiHook implements Listener {
 
-    private final Set<BaseGui> activateGuiInstances = new HashSet<>();
-
     @EventHandler(ignoreCancelled = true)
-    public void onInventoryClick(InventoryClickEvent event){
+    public void onInventoryClick(InventoryClickEvent event) {
         BaseGui gui = BaseGui.getGui(event.getInventory());
 
-        if(gui == null){
+        if (gui == null) {
             return;
         }
-        //Logging.info(event.getWhoClicked().getName() +": clicked : "+gui.canClick);
-        if(!gui.canClick){
+
+        if (!gui.isClickable) {
             event.setCancelled(true);
             return;
         }
+
         InventoryView view = event.getView();
-        Inventory inventory = getInventory(view,event.getRawSlot());
-        if(inventory == null){
-            //Clicked outside both inventories
+        Inventory inventory = getClickedInventory(view, event.getRawSlot());
+        if (inventory == null) {
             return;
         }
-        gui.callOnClick(event);
-        //detect bottom or top inv
+
+        gui.handleClick(event);
     }
-    public final Inventory getInventory(InventoryView inv,int rawSlot) {
+
+    private Inventory getClickedInventory(InventoryView view, int rawSlot) {
         // Slot may be -1 if not properly detected due to client bug
-        // e.g. dropping an item into part of the enchantment list section of an enchanting table
+        // e.g., dropping an item into part of the enchantment list section of an enchanting table
         if (rawSlot == OUTSIDE || rawSlot == -1) {
             return null;
         }
-        Preconditions.checkArgument(rawSlot >= 0, "Negative, non outside slot %s", rawSlot);
-        Preconditions.checkArgument(rawSlot < inv.countSlots(), "Slot %s greater than inventory slot count", rawSlot);
 
-        if (rawSlot < inv.getTopInventory().getSize()) {
-            return inv.getTopInventory();
-        } else {
-            return inv.getBottomInventory();
-        }
+        Preconditions.checkArgument(rawSlot >= 0, "Negative, non outside slot: " + rawSlot);
+        Preconditions.checkArgument(rawSlot < view.countSlots(), "Slot %s greater than inventory slot count: " + rawSlot);
+
+        return rawSlot < view.getTopInventory().getSize() ? view.getTopInventory() : view.getBottomInventory();
     }
+
     @EventHandler(ignoreCancelled = true)
-    public void onInventoryClose(InventoryCloseEvent event){
+    public void onInventoryClose(InventoryCloseEvent event) {
         BaseGui gui = BaseGui.getGui(event.getInventory());
-        if(gui == null){
+        if (gui == null) {
             return;
         }
-        if(gui.isUpdating()){
-            gui.callOnClose(event);
-            if(gui.getViewerCount() == 1){
-                activateGuiInstances.remove(gui);
-            }
-            return;
-        }else{
-            //Logging.info("Force Closing of GUI");
-            Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()->{
+
+        if (gui.isUpdating()) {
+            gui.handleClose(event);
+        } else {
+            Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(), () -> {
                 HumanEntity humanEntity = event.getPlayer();
                 humanEntity.closeInventory();
             });
         }
-        gui.callOnClose(event);
-    }
-    @EventHandler(ignoreCancelled = true)
-    public void onInventoryOpen(InventoryOpenEvent event){
-        BaseGui gui = BaseGui.getGui(event.getInventory());
-        if(gui == null){
-            return;
-        }
-        gui.callOnOpen(event);
+
+        gui.handleClose(event);
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        BaseGui gui = BaseGui.getGui(event.getInventory());
+        if (gui == null) {
+            return;
+        }
+
+        gui.handleOpen(event);
+    }
 }

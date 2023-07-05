@@ -3,8 +3,6 @@ package me.tropicalshadow.arcanetable.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -64,14 +62,13 @@ public class EnchantmentUtils {
         }else{
             if(language!=null){
                 base = ench.getKey().getKey().toLowerCase(new Locale(language));
-                ///Logging.info("Using: "+language + " : "+ new Locale(language).getDisplayName() +" : "+base );
             }else{
                 base = ench.getKey().getKey();
             }
         }
 
         String spacedName = base.replace('_',' ');
-        return WordUtils.capitalizeFully(spacedName);
+        return capitalizeFully(spacedName);
     }
     public static ItemStack applyEnchantToItem(ItemStack item, Enchantment ench, int level,boolean isUnsafe, boolean removeConflitcs){
         if(removeConflitcs){
@@ -115,6 +112,23 @@ public class EnchantmentUtils {
     }
     public static int getEnchantmentCost(Enchantment ench,int level){
         return EnchantmentCosts.getFromEnchant(ench).getCost(level);
+    }
+
+    public static String capitalizeFully(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        StringBuilder result = new StringBuilder();
+        String[] words = input.toLowerCase().split(" ");
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
+            }
+        }
+
+        return result.toString().trim();
     }
     private static final int[] values = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
     private static final String[] romanLiterals = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
@@ -171,13 +185,14 @@ public class EnchantmentUtils {
         QUICK_CHARGE(35,3,2,VersionUtils.isLegacy ? Enchantment.getByName("quick_charge") :Enchantment.getByKey(NamespacedKey.minecraft("quick_charge"))),
         SOUL_SPEED(36,3,8,VersionUtils.isLegacy ? Enchantment.getByName("soul_speed") :Enchantment.getByKey(NamespacedKey.minecraft("soul_speed"))),
         SWEEPING_EDGE(37,3,4,VersionUtils.isLegacy ? Enchantment.getByName("sweeping") :Enchantment.getByKey(NamespacedKey.minecraft("sweeping"))),
+        SWIFT_SNEEK(38,5,4, VersionUtils.versionID < 19 ? null : Enchantment.getByKey(NamespacedKey.minecraft("swift_sneek"))),
         UNKNOWN(6699,0,1,null)
         ;
 
-        public int id;
-        public int maxLevel;
-        public int itemMulti;
-        public Enchantment ench;
+        public final int id;
+        public final int maxLevel;
+        public final int itemMulti;
+        public final Enchantment ench;
         EnchantmentCosts(int id, int maxLevel, int itemMulti,Enchantment ench) {
             this.id = id;
             this.maxLevel = maxLevel;

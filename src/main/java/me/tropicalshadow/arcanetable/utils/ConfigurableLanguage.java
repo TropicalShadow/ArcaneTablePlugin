@@ -3,9 +3,15 @@ package me.tropicalshadow.arcanetable.utils;
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.List;
+
 public enum ConfigurableLanguage {
-    PLACE_ITEM_IN_SLOT("Place item in slot above", "place-item-in-slot"),
-    PLACE_ITEM_ABOVE("Place item above","place-item-above"),
+    PLACE_ITEM_NAME("Place item above", "place-item-above.name"),
+    PLACE_ITEM_LORE("Place item above", "place-item-above.lore"),
+
+    GO_BACK_NAME("&cGo Back", "go-back.name"),
+    GO_BACK_LORE("&7Click to go back", "go-back.lore"),
+
     ALREADY_HAS_LINE_1("&4Item already has this enchantment", "already-has.line-1"),
     ALREADY_HAS_LINE_2("&4Clicking will remove this enchant", "already-has.line-2"),
     ENCHANTMENT_HAS_CONFLICT("&4Enchantment conflicts with current enchants","enchantment-has-conflict"),
@@ -34,8 +40,15 @@ public enum ConfigurableLanguage {
     public String getDefaultText() {
         return defaultText;
     }
+
     public String getText(){
         YamlConfiguration config = ArcaneTable.getPlugin().langConfig;
         return config.isString(getConfigLocation()) ? config.getString(getConfigLocation()) : getDefaultText();
     }
+
+    public List<String> getTextList(){
+        YamlConfiguration config = ArcaneTable.getPlugin().langConfig;
+        return config.isList(getConfigLocation()) ? config.getStringList(getConfigLocation()) : List.of(getDefaultText());
+    }
+
 }

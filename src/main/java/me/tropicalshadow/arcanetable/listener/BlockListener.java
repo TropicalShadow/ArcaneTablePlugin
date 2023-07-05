@@ -2,7 +2,7 @@ package me.tropicalshadow.arcanetable.listener;
 
 import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.gui.TableGui;
-import me.tropicalshadow.arcanetable.utils.Logging;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,28 +15,30 @@ public class BlockListener implements Listener {
 
     @EventHandler()
     public void onClickEnchantingTable(PlayerInteractEvent event){
-        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if(event.getClickedBlock()!=null && event.getClickedBlock().getType().equals(ArcaneTable.getEnchantingTableMaterial())){
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block clickedBlock = event.getClickedBlock();
+            if (clickedBlock != null && clickedBlock.getType() == ArcaneTable.getEnchantingTableMaterial()) {
                 event.setCancelled(true);
                 TableGui gui = new TableGui();
-                gui.setEnchantmentTable(event.getClickedBlock());
+                gui.setEnchantmentTable(clickedBlock);
                 gui.show(event.getPlayer());
             }
         }
     }
+
     @EventHandler()
     public void onBreakingOfEnchantmentTable(BlockBreakEvent event){
-        if(!event.getBlock().getType().equals(ArcaneTable.ETABLEMATERIAL))return;
-        Block eTable = event.getBlock();
-        TableGui.GUI_INVETORIES.forEach((inv,gui)->{
-            if(gui instanceof TableGui){
-                TableGui tGui = ((TableGui) gui);
-                if(tGui.getBlock()!=null){
-                    if(tGui.getBlock().equals(eTable)){
-                        ((TableGui) gui).closeInventorySafely(inv);
-                    }
+        Block block = event.getBlock();
+        if (block.getType() != ArcaneTable.getEnchantingTableMaterial()) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTask(ArcaneTable.getPlugin(),()-> TableGui.GUI_INVETORIES.forEach((inv, gui)->{
+            if(gui instanceof TableGui tableGui){
+                if(tableGui.getBlock() != null && tableGui.getBlock().equals(block)){
+                    tableGui.closeInventorySafely(inv);
                 }
             }
-        });
+        }));
     }
 }

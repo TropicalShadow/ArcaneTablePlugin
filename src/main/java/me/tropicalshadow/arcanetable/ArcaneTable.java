@@ -4,8 +4,8 @@ import me.tropicalshadow.arcanetable.gui.BaseGui;
 import me.tropicalshadow.arcanetable.gui.TableGui;
 import me.tropicalshadow.arcanetable.listener.BlockListener;
 import me.tropicalshadow.arcanetable.utils.Logging;
-import me.tropicalshadow.arcanetable.utils.PluginExtensionsUtils;
 import me.tropicalshadow.arcanetable.utils.VersionUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.*;
+import java.util.Map;
 
 public final class ArcaneTable extends JavaPlugin {
 
@@ -30,7 +30,6 @@ public final class ArcaneTable extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
         VersionUtils.versionControl();
-        new PluginExtensionsUtils();
         try {
             if (!getDataFolder().exists()) {
                 getDataFolder().mkdir();
@@ -48,14 +47,15 @@ public final class ArcaneTable extends JavaPlugin {
     public void onDisable() {
         timber();
         HandlerList.unregisterAll(this);
+        Bukkit.getScheduler().cancelTasks(this);
         Logging.info("Plugin Disabled");
         INSTANCE = null;
     }
+
     public static void timber(){
         BaseGui.GUI_INVETORIES.forEach((inv,gui)->{
-            if(gui instanceof TableGui){
-                TableGui enchantmentTable = ((TableGui) gui);
-                ItemStack item = enchantmentTable.getCurrentItem();
+            if(gui instanceof TableGui enchantmentTable){
+                ItemStack item = enchantmentTable.getActiveItem();
                 if(!(item == null || item.getType().equals(Material.AIR))) {
                     if(inv.getViewers().size()>=1){
                         Player player = (Player) inv.getViewers().get(0);

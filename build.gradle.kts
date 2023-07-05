@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.tropicalshadow"
-version = "1.4.1-SNAPSHOT"
+version = "1.5.0"
 
 repositories {
     mavenCentral()
@@ -15,19 +15,21 @@ repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://oss.sonatype.org/content/groups/public/")
     maven("https://libraries.minecraft.net/")
-    maven("https://papermc.io/repo/repository/maven-public/")
 
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.5.21")
 }
 
 tasks {
     runServer {
         minecraftVersion("1.20.1")
+    }
+
+    test{
+        workingDir = file("run")
     }
 
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

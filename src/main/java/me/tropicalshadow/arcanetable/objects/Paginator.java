@@ -6,43 +6,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Paginator {
-    public List<Object> items = new ArrayList<>();
-    public Class<?> itemClass;
-    public int currentPage;
-    public int itemCount;
-    public int pageCount;
-    public int pageSize;
+public class Paginator<T> {
+    private final List<T> items = new ArrayList<>();
+    private int currentPage;
+    private int itemCount;
+    private int pageCount;
+    private final int pageSize;
 
-    public Paginator(Class<?> itemClass, int pageSize) throws Exception{
-        this.itemClass = itemClass;
-        if(pageSize <=0){
-            throw new Exception("Invalid size of pages");
+    public Paginator(int pageSize) throws IllegalArgumentException {
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("Invalid page size");
         }
         this.pageSize = pageSize;
         this.currentPage = 0;
         this.itemCount = 0;
         this.pageCount = 0;
-
     }
 
-    public Paginator addItem(Object obj) throws Exception {
-        if( itemClass.isInstance(obj)){
-            items.add(obj);
-            updateStats();
-            return this;
-        }
-        throw new Exception("addItem() invalid Object passed");
+    public Paginator<T> addItem(T obj) throws IllegalArgumentException {
+        items.add(obj);
+        updateStats();
+        return this;
     }
 
-    public Paginator addItems(Object... objs) {
+    public Paginator<T> addItems(T... objs) {
         return this.addItems(Arrays.asList(objs));
     }
-    public Paginator addItems(ArrayList<?> objs) {
-        for (Object obj : objs) {
-            try{
+
+    public Paginator<T> addItems(ArrayList<T> objs) {
+        for (T obj : objs) {
+            try {
                 addItem(obj);
-            }catch (Exception e){
+            } catch (IllegalArgumentException e) {
                 Logging.danger("Issue while adding items to paginator");
                 e.printStackTrace();
             }
@@ -51,39 +46,37 @@ public class Paginator {
         return this;
     }
 
-    public Paginator addItems(List<?> objs) {
+    public Paginator<T> addItems(List<T> objs) {
         return this.addItems(new ArrayList<>(objs));
     }
 
-    public Paginator clear(){
+    public Paginator<T> clear() {
         items.clear();
         itemCount = 0;
         pageCount = 0;
         return this;
     }
 
-    public void updateStats(){
+    private void updateStats() {
         this.itemCount = items.size();
-        this.pageCount = this.itemCount/pageSize;
-        if(this.currentPage>this.pageCount && this.pageCount>=1){
-            this.currentPage=this.pageCount;
-        }else if(this.currentPage<0){
+        this.pageCount = (int) Math.ceil((double) this.itemCount / pageSize);
+        if (this.currentPage > this.pageCount && this.pageCount >= 1) {
+            this.currentPage = this.pageCount;
+        } else if (this.currentPage < 0) {
             this.currentPage = 0;
         }
     }
 
-    public int getCurrentPageNumber() {
+    public int getCurrentPage() {
         return currentPage;
     }
-    public List<?> getCurrentPage(){
-        List<Object> output = new ArrayList<>();
-        int pageNum = this.getCurrentPageNumber();
-        int startIndex = pageNum==0 ? 0 : (this.pageSize*(pageNum));
-        int endIndex = pageNum==0 ? this.pageSize-1 : (this.pageSize*(pageNum+1))-1;
-        for (int i = startIndex; i <= endIndex; i++) {
-            if(i >= this.items.size()){
-                break;
-            }
+
+    public List<T> getCurrentPageContent() {
+        List<T> output = new ArrayList<>();
+        int pageNum = this.getCurrentPage();
+        int startIndex = pageNum == 0 ? 0 : (this.pageSize * pageNum);
+        int endIndex = pageNum == 0 ? this.pageSize - 1 : (this.pageSize * (pageNum + 1)) - 1;
+        for (int i = startIndex; i <= endIndex && i < this.items.size(); i++) {
             output.add(this.items.get(i));
         }
         return output;
@@ -94,20 +87,25 @@ public class Paginator {
         return pageCount;
     }
 
-    public Paginator nextPage(){
+    public Paginator<T> nextPage() {
         updateStats();
-        if(currentPage!=pageCount)currentPage++;
-        return this;
-    }
-    public Paginator prevPage(){
-        updateStats();
-        if(currentPage!=0)currentPage--;
-        return this;
-    }
-    public Paginator setPage(int num){
-        updateStats();
-        currentPage=num;
+        if (currentPage != pageCount) {
+            currentPage++;
+        }
         return this;
     }
 
+    public Paginator<T> prevPage() {
+        updateStats();
+        if (currentPage != 0) {
+            currentPage--;
+        }
+        return this;
+    }
+
+    public Paginator<T> setPage(int num) {
+        updateStats();
+        currentPage = Math.max(0, Math.min(num, pageCount - 1));
+        return this;
+    }
 }

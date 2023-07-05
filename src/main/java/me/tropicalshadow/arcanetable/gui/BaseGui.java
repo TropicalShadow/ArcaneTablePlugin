@@ -4,17 +4,15 @@ import me.tropicalshadow.arcanetable.ArcaneTable;
 import me.tropicalshadow.arcanetable.listener.GuiHook;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +27,14 @@ public class BaseGui implements InventoryHolder {
     private Consumer<InventoryCloseEvent> closeEvent;
     private Consumer<InventoryOpenEvent> openEvent;
     private static boolean hasRegisteredListeners = false;
-    public boolean canClick = true;
+    public boolean isClickable = true;
     private Inventory inv = null;
     private boolean updating;
     private final String name;
     private final int rows;
 
     public BaseGui(){
-        this("BaseGui",1);
+        this("BaseGui");
     }
     public BaseGui(String name){
         this(name,1);
@@ -63,33 +61,31 @@ public class BaseGui implements InventoryHolder {
     public void setOnClick(Consumer<InventoryClickEvent> onClick){
         this.clickEvent = onClick;
     }
-    public void callOnClick(InventoryClickEvent event){
+    public void handleClick(InventoryClickEvent event){
         callCallback(clickEvent,event,"onClick");
     }
     public void setOnClose(Consumer<InventoryCloseEvent> onClose){
         this.closeEvent = onClose;
     }
-    public void callOnClose(InventoryCloseEvent event){
+    public void handleClose(InventoryCloseEvent event){
         callCallback(closeEvent,event,"onClose");
     }
     public void setOnOpen(Consumer<InventoryOpenEvent> onClose){
         this.openEvent = onClose;
     }
-    public void callOnOpen(InventoryOpenEvent event){callCallback(openEvent,event,"onOpen");}
+    public void handleOpen(InventoryOpenEvent event){callCallback(openEvent,event,"onOpen");}
     private <T extends InventoryEvent> void callCallback(Consumer<T> callback, T event, String callbackName){
         if(callback == null)return;
         try{
             callback.accept(event);
-        }catch(Throwable t){
+        }catch(Throwable throwable){
             String message = "Exception while handling "+ callbackName;
             if(event instanceof InventoryCloseEvent){
-                InventoryCloseEvent closeEvent = (InventoryCloseEvent)event;
-                message += t.getMessage();
+                message += throwable.getMessage();
             }
-            if(event instanceof InventoryClickEvent){
-                InventoryClickEvent clickEvent = (InventoryClickEvent) event;
+            if(event instanceof InventoryClickEvent clickEvent){
                 message += ", slot=" + clickEvent.getSlot();
-                t.printStackTrace();
+                throwable.printStackTrace();
             }
             Logging.danger(message);
         }
@@ -121,7 +117,7 @@ public class BaseGui implements InventoryHolder {
         humanEntity.openInventory(getInventory());
     }
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         if(inv == null){
             inv = createInventory();
         }

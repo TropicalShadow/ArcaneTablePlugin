@@ -9,13 +9,15 @@ The Arcane Table will allow you to enchant your item as many times...
 ------------------------------------------
 ## Versions 
 
+[1.5.1](#v151--version-checking-fix) MC 1.20 Support
+
 [1.5-SNAPSHOT](#v15-snapshot--mc-120-support) MC 1.20 Support
 
 [1.4.1-SNAPSHOT](#v141-snapshot--fixed-display-for-conflicting-enchants) Conflict Enchatn Fix
 
 [1.4-SNAPSHOT](#v14-snapshot--more-fixes) Code Refactoring
 
-[1.3-SNAPSHOT](#v13-snapshot--close-gui-on-block-break) Inv Close On Block Break
+[1.3-SNAPSHOT](#v13-snapshot--utils-fixes) Inv Close On Block Break
 
 [1.2-SNAPSHOT](#v12-snapshot--config) Config Added
 
@@ -26,6 +28,11 @@ The Arcane Table will allow you to enchant your item as many times...
 
 
 ---
+
+### v1.5.1 | Version Checking Fix
+
+- [x] Fixed version checking issues
+- [x] Clean-up of EnchantmentUtils
 
 ### v1.5-SNAPSHOT | MC 1.20 support
 

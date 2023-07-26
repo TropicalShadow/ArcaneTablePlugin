@@ -4,20 +4,29 @@ import me.tropicalshadow.arcanetable.ArcaneTable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.UnknownNullability;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class VersionUtils {
 
-    public static String version = Bukkit.getVersion();
+    public static String bukkitVersion = Bukkit.getVersion();
 
-    public static int versionID = (Integer.parseInt(version.split("\\.")[1]));
+    @UnknownNullability
+    private static Version serverVersion = null;
+
     public static boolean isLegacy = false;
 
     public static void versionControl(){
-        Logging.info(version);
-        if(version.split("\\.")[1].endsWith(")")){
-            isLegacy = false;
+        Logging.info(bukkitVersion);
+        Version version = VersionUtils.getServerVersion();
+        if(version == null){
+            isLegacy = true;
         }else {
-            isLegacy = versionID < 13;
+            if(version.getMinor() < 13){
+                isLegacy = true;
+            }
         }
 
         try{
@@ -31,6 +40,25 @@ public class VersionUtils {
             e.printStackTrace();
             ArcaneTable.ADVANCEMENT = null;
         }
+    }
+
+    @UnknownNullability
+    public static Version getServerVersion(){
+        Version version = serverVersion;
+        if(version == null){
+            version = updateServerVersion();
+        }
+        return version;
+    }
+
+    public static Version updateServerVersion(){
+        Matcher m = Pattern.compile("\\d+\\.\\d+(\\.\\d+)?").matcher(bukkitVersion);
+        if (!m.find()) {
+            serverVersion = new Version(666, 0, 0);
+        } else {
+            serverVersion = new Version(m.group());
+        }
+        return serverVersion;
     }
 
     public enum COLOUR{

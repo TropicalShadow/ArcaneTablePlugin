@@ -7,17 +7,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class EnchantmentUtils {
-
-
-    public static ArrayList<Enchantment> getAllEnchantments(){
-        return (ArrayList<Enchantment>) Arrays.asList(Enchantment.values());
-    }
 
     public static ArrayList<Enchantment> getCanEnchants(ItemStack item){
         ArrayList<Enchantment> output = new ArrayList<>();
@@ -36,7 +29,7 @@ public class EnchantmentUtils {
         int level = item.getEnchantmentLevel(ench);
         assert item.getItemMeta() != null;
         List<Component> lore = Objects.requireNonNullElse(item.getItemMeta().lore(), new ArrayList<>());
-        Collection<Component> loreToRemove = lore.stream().filter(line -> line == getEnchantDisplayWithRomanNum(ench,level)).collect(Collectors.toList());
+        Collection<Component> loreToRemove = lore.stream().filter(line -> line == getEnchantDisplayWithRomanNum(ench,level)).toList();
         if(loreToRemove.size()>0){
             lore.removeAll(loreToRemove);
             item.getItemMeta().lore(lore);
@@ -49,27 +42,7 @@ public class EnchantmentUtils {
     public static TranslatableComponent getEnchantmentTranslateName(Enchantment ench){
         return Component.translatable("enchantment.minecraft."+ench.getKey().getKey());
     }
-    
-    public static String getEnchantmentName(Enchantment ench, @Nullable String language){
-        EnchantmentCosts en = EnchantmentCosts.getFromEnchant(ench);
-        String base;
-        if(VersionUtils.isLegacy){
-            if(language!=null){
-                base = ench.getName().toLowerCase(new Locale(language));
-            }else{
-                base = ench.getName();
-            }
-        }else{
-            if(language!=null){
-                base = ench.getKey().getKey().toLowerCase(new Locale(language));
-            }else{
-                base = ench.getKey().getKey();
-            }
-        }
 
-        String spacedName = base.replace('_',' ');
-        return capitalizeFully(spacedName);
-    }
     public static ItemStack applyEnchantToItem(ItemStack item, Enchantment ench, int level,boolean isUnsafe, boolean removeConflitcs){
         if(removeConflitcs){
             for (Enchantment conflictingEnchantment : findConflictingEnchantments(item, ench)) {
@@ -114,22 +87,6 @@ public class EnchantmentUtils {
         return EnchantmentCosts.getFromEnchant(ench).getCost(level);
     }
 
-    public static String capitalizeFully(String input) {
-        if (input == null || input.isEmpty()) {
-            return input;
-        }
-
-        StringBuilder result = new StringBuilder();
-        String[] words = input.toLowerCase().split(" ");
-
-        for (String word : words) {
-            if (!word.isEmpty()) {
-                result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
-            }
-        }
-
-        return result.toString().trim();
-    }
     private static final int[] values = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
     private static final String[] romanLiterals = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
 
@@ -185,7 +142,7 @@ public class EnchantmentUtils {
         QUICK_CHARGE(35,3,2,VersionUtils.isLegacy ? Enchantment.getByName("quick_charge") :Enchantment.getByKey(NamespacedKey.minecraft("quick_charge"))),
         SOUL_SPEED(36,3,8,VersionUtils.isLegacy ? Enchantment.getByName("soul_speed") :Enchantment.getByKey(NamespacedKey.minecraft("soul_speed"))),
         SWEEPING_EDGE(37,3,4,VersionUtils.isLegacy ? Enchantment.getByName("sweeping") :Enchantment.getByKey(NamespacedKey.minecraft("sweeping"))),
-        SWIFT_SNEEK(38,5,4, VersionUtils.versionID < 19 ? null : Enchantment.getByKey(NamespacedKey.minecraft("swift_sneek"))),
+        SWIFT_SNEEK(38,5,4, VersionUtils.getServerVersion().getMinor() < 19 ? null : Enchantment.getByKey(NamespacedKey.minecraft("swift_sneek"))),
         UNKNOWN(6699,0,1,null)
         ;
 

@@ -6,8 +6,6 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
-group = "me.tropicalshadow"
-version = "1.5.1"
 
 repositories {
     mavenCentral()
@@ -25,7 +23,7 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.1")
+        minecraftVersion("1.20.2")
     }
 
     test{

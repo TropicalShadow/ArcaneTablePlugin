@@ -9,6 +9,8 @@ The Arcane Table will allow you to enchant your item as many times...
 ------------------------------------------
 ## Versions 
 
+[1.5.2](#v152--metrics--testing) Metrics & Testing
+
 [1.5.1](#v151--version-checking-fix) MC 1.20 Support
 
 [1.5-SNAPSHOT](#v15-snapshot--mc-120-support) MC 1.20 Support
@@ -28,6 +30,11 @@ The Arcane Table will allow you to enchant your item as many times...
 
 
 ---
+
+### v1.5.2 | Metrics & Testing
+
+- [x] Added Metrics
+- [x] tested on 1.20.2
 
 ### v1.5.1 | Version Checking Fix
 

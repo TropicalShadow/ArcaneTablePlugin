@@ -3,6 +3,7 @@ package me.tropicalshadow.arcanetable;
 import me.tropicalshadow.arcanetable.gui.BaseGui;
 import me.tropicalshadow.arcanetable.gui.TableGui;
 import me.tropicalshadow.arcanetable.listener.BlockListener;
+import me.tropicalshadow.arcanetable.metrics.Metrics;
 import me.tropicalshadow.arcanetable.utils.Logging;
 import me.tropicalshadow.arcanetable.utils.VersionUtils;
 import org.bukkit.Bukkit;
@@ -23,12 +24,16 @@ public final class ArcaneTable extends JavaPlugin {
     private static ArcaneTable INSTANCE;
     public static Material ETABLEMATERIAL;
     public static Object ADVANCEMENT;
+
+    private Metrics metrics;
     public YamlConfiguration langConfig;
 
 
     @Override
     public void onEnable() {
         INSTANCE = this;
+
+        metrics = new Metrics(this, 20367);
         VersionUtils.versionControl();
         try {
             if (!getDataFolder().exists()) {
@@ -48,6 +53,7 @@ public final class ArcaneTable extends JavaPlugin {
         timber();
         HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTasks(this);
+        metrics.shutdown();
         Logging.info("Plugin Disabled");
         INSTANCE = null;
     }

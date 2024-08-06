@@ -17,13 +17,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:1.5.21")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("com.mojang:authlib:1.5.25")
+
 }
 
 tasks {
     runServer {
-        minecraftVersion("1.20.2")
+        minecraftVersion("1.21")
     }
 
     test{
@@ -41,5 +42,5 @@ tasks {
     }
 }
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }

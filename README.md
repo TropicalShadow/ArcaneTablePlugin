@@ -9,6 +9,8 @@ The Arcane Table will allow you to enchant your item as many times...
 ------------------------------------------
 ## Versions 
 
+[1.5.3](#v153--minecraft-121-update) Minecraft 1.21 update
+
 [1.5.2](#v152--metrics--testing) Metrics & Testing
 
 [1.5.1](#v151--version-checking-fix) MC 1.20 Support
@@ -30,6 +32,11 @@ The Arcane Table will allow you to enchant your item as many times...
 
 
 ---
+
+### v1.5.3 | Minecraft 1.21 update
+- [x] gradle 8.9
+- [x] java 21
+- [x] paper 1.21
 
 ### v1.5.2 | Metrics & Testing
 
